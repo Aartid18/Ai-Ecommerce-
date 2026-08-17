@@ -11,9 +11,6 @@ import {
   Star,
   CheckCircle2,
   AlertCircle,
-  Cpu,
-  Layers,
-  Zap,
   ArrowRight,
 } from 'lucide-react';
 
@@ -33,7 +30,7 @@ export const CustomerAiCopilot: React.FC = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'assistant',
-      text: "Hello! I am your AI Shopping Copilot. Unlike generic chatbots, my recommendations are directly grounded in our real-time technical specifications, price points, and actual warehouse stock. Ask me anything like: 'I need a coding laptop under ₹70,000' or 'Best noise-cancelling headphones for flights'.",
+      text: "Hello! I am your AI Shopping Copilot. My recommendations are directly grounded in verified catalog specifications, historical price-performance curves, and active warehouse stock. Ask me anything like: 'I need a coding laptop under ₹70,000' or 'Best noise-cancelling headphones'.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -76,39 +73,39 @@ export const CustomerAiCopilot: React.FC = () => {
   };
 
   const samplePrompts = [
-    'I need a coding laptop under ₹70,000',
-    'Best wireless noise-cancelling headphones for work',
+    'I need a laptop for coding under ₹70,000',
+    'Wireless noise cancelling headphones under ₹3,000',
     'Mechanical keyboard for fast typing',
-    'Multi-port fast charging USB-C hub',
+    'Fast charging USB-C hub adapter',
   ];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 flex items-center justify-between bg-gradient-to-r from-slate-900 via-slate-900 to-emerald-950/30">
+      <div className="prem-card p-5 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/15">
-            <Sparkles className="w-6 h-6" />
+          <div className="w-10 h-10 rounded-xl bg-accent-subtle border border-accent-border text-accent flex items-center justify-center">
+            <Sparkles className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-extrabold text-slate-100">AI Shopping Copilot</h1>
-              <Badge variant="emerald" size="sm">Grounded Database Reasoning</Badge>
+              <h1 className="text-sm font-bold text-txt-primary">AI Shopping Copilot</h1>
+              <Badge variant="emerald" size="sm">Grounded Hardware Intelligence</Badge>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Zero hallucinations • Real technical specs • Honest trade-offs
+            <p className="text-[11px] text-txt-muted mt-0.5">
+              Verified technical specifications • Unbiased trade-offs • Zero hallucinations
             </p>
           </div>
         </div>
       </div>
 
-      {/* Suggested Query Pills */}
+      {/* Suggested Quick Chips */}
       <div className="flex flex-wrap gap-2">
         {samplePrompts.map((prompt, i) => (
           <button
             key={i}
             onClick={() => handleSend(prompt)}
-            className="text-xs px-3 py-1.5 rounded-xl bg-slate-850 hover:bg-emerald-500/20 border border-slate-800 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-300 transition-all"
+            className="text-xs px-3 py-1.5 rounded-xl bg-surface-card hover:bg-surface-card-hover border border-border-subtle hover:border-border-hover text-txt-secondary hover:text-txt-primary transition-all font-medium"
           >
             "{prompt}"
           </button>
@@ -116,16 +113,15 @@ export const CustomerAiCopilot: React.FC = () => {
       </div>
 
       {/* Conversation Thread */}
-      <div className="glass-panel rounded-3xl border border-slate-800 p-6 space-y-6 min-h-[450px] max-h-[650px] overflow-y-auto">
+      <div className="prem-card p-5 space-y-5 min-h-[420px] max-h-[600px] overflow-y-auto">
         {messages.map((msg, idx) => (
           <div
             key={idx}
             className={`flex flex-col ${
               msg.sender === 'user' ? 'items-end' : 'items-start'
-            } space-y-2`}
+            } space-y-1.5`}
           >
-            {/* Sender bubble */}
-            <div className="flex items-center gap-2 text-[10px] text-slate-500 px-1">
+            <div className="flex items-center gap-1.5 text-[10px] text-txt-muted px-1">
               <span className="font-semibold">{msg.sender === 'user' ? 'You' : 'AI Copilot'}</span>
               <span>•</span>
               <span>{msg.timestamp}</span>
@@ -133,10 +129,10 @@ export const CustomerAiCopilot: React.FC = () => {
 
             {msg.text && (
               <div
-                className={`max-w-xl p-4 rounded-2xl text-xs leading-relaxed ${
+                className={`max-w-xl p-3.5 rounded-2xl text-xs leading-relaxed ${
                   msg.sender === 'user'
-                    ? 'bg-emerald-500 text-slate-950 font-medium rounded-tr-none shadow-lg shadow-emerald-500/10'
-                    : 'bg-slate-900 border border-slate-800 text-slate-200 rounded-tl-none'
+                    ? 'bg-accent text-bg-primary font-medium rounded-tr-none'
+                    : 'bg-surface-card border border-border-subtle text-txt-primary rounded-tl-none'
                 }`}
               >
                 {msg.text}
@@ -145,43 +141,45 @@ export const CustomerAiCopilot: React.FC = () => {
 
             {/* AI Grounded Structured Card Results */}
             {msg.data && (
-              <div className="w-full space-y-4 pt-1">
+              <div className="w-full space-y-3 pt-1">
                 {msg.data.aiExplanation && (
-                  <div className="p-4 bg-slate-900/90 border border-slate-800 rounded-2xl text-xs text-slate-200 leading-relaxed">
-                    <span className="font-bold text-emerald-400">Analysis: </span>
+                  <div className="p-3.5 bg-surface-card border border-border-subtle rounded-xl text-xs text-txt-secondary leading-relaxed">
+                    <span className="font-semibold text-accent">Analysis: </span>
                     {msg.data.aiExplanation}
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                   {msg.data.recommendations?.map((rec) => (
                     <div
                       key={rec.productId}
-                      className="glass-card p-5 rounded-2xl border border-slate-800 space-y-4 flex flex-col justify-between"
+                      className="prem-card-hover p-4 rounded-xl border border-border-subtle space-y-3 flex flex-col justify-between"
                     >
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
                         <div className="flex items-center justify-between">
                           <Badge variant="emerald" size="sm">{rec.matchBadge || 'Best Match'}</Badge>
-                          <div className="flex items-center gap-1 text-amber-400 text-xs font-bold">
-                            <Star className="w-3.5 h-3.5 fill-amber-400" />
+                          <div className="flex items-center gap-1 text-status-warning text-xs font-semibold">
+                            <Star className="w-3.5 h-3.5 fill-status-warning text-status-warning" />
                             <span>{rec.rating}</span>
                           </div>
                         </div>
 
                         <div className="flex gap-3">
-                          <img
-                            src={rec.mainImageUrl}
-                            alt={rec.productName}
-                            className="w-16 h-16 rounded-xl object-cover bg-slate-900 border border-slate-800 flex-shrink-0"
-                          />
+                          <div className="w-14 h-14 rounded-xl bg-[#111820] border border-border-subtle p-1 flex items-center justify-center flex-shrink-0">
+                            <img
+                              src={rec.mainImageUrl}
+                              alt={rec.productName}
+                              className="max-h-full max-w-full object-contain"
+                            />
+                          </div>
                           <div className="flex-1 min-w-0">
                             <h3
                               onClick={() => navigate(`/customer/product/${rec.productId}`)}
-                              className="text-xs font-bold text-slate-100 hover:text-emerald-400 cursor-pointer line-clamp-2 leading-snug"
+                              className="text-xs font-bold text-txt-primary hover:text-accent cursor-pointer line-clamp-2 leading-snug"
                             >
                               {rec.productName}
                             </h3>
-                            <div className="text-base font-extrabold text-emerald-400 mt-1">
+                            <div className="text-sm font-bold text-txt-primary mt-1 font-sans">
                               ₹{rec.price.toLocaleString()}
                             </div>
                           </div>
@@ -190,34 +188,34 @@ export const CustomerAiCopilot: React.FC = () => {
                         {/* Why Recommended */}
                         {rec.whyRecommended && rec.whyRecommended.length > 0 && (
                           <div className="space-y-1">
-                            <div className="text-[11px] font-bold text-slate-300">Why It Fits Your Requirement:</div>
+                            <div className="text-[10px] font-semibold text-txt-muted uppercase">Specification Match:</div>
                             {rec.whyRecommended.map((point, pIdx) => (
-                              <div key={pIdx} className="text-xs text-emerald-300/90 flex items-start gap-1.5">
-                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0 mt-0.5" />
+                              <div key={pIdx} className="text-[11px] text-txt-secondary flex items-start gap-1.5">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-accent flex-shrink-0 mt-0.5" />
                                 <span>{point}</span>
                               </div>
                             ))}
                           </div>
                         )}
 
-                        {/* Honest Trade-Off */}
+                        {/* Trade-Off */}
                         {rec.tradeOff && (
-                          <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800/80 text-xs text-slate-400 flex items-start gap-2">
-                            <AlertCircle className="w-3.5 h-3.5 text-amber-400 flex-shrink-0 mt-0.5" />
+                          <div className="p-2 bg-bg-primary rounded-lg border border-border-subtle text-[11px] text-txt-muted flex items-start gap-1.5">
+                            <AlertCircle className="w-3.5 h-3.5 text-status-warning flex-shrink-0 mt-0.5" />
                             <div>
-                              <span className="font-semibold text-slate-300">Trade-Off Consideration: </span>
+                              <span className="font-semibold text-txt-secondary">Trade-Off: </span>
                               {rec.tradeOff}
                             </div>
                           </div>
                         )}
 
-                        {/* Key Specs Pills */}
+                        {/* Key Specs */}
                         {rec.keySpecs && rec.keySpecs.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 pt-1">
+                          <div className="flex flex-wrap gap-1 pt-1">
                             {rec.keySpecs.map((spec, sIdx) => (
                               <span
                                 key={sIdx}
-                                className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md font-mono"
+                                className="text-[10px] bg-bg-primary text-txt-muted border border-border-subtle px-1.5 py-0.2 rounded font-mono"
                               >
                                 {spec}
                               </span>
@@ -226,19 +224,19 @@ export const CustomerAiCopilot: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Direct CTA Buttons */}
-                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
+                      {/* CTAs */}
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border-subtle">
                         <button
                           onClick={() => addToCart(rec.productId, undefined, 1)}
-                          className="py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/10 transition-all"
+                          className="prem-btn-primary py-2 text-xs"
                         >
                           <ShoppingBag className="w-3.5 h-3.5" /> Add to Cart
                         </button>
                         <button
                           onClick={() => navigate(`/customer/product/${rec.productId}`)}
-                          className="py-2 bg-slate-850 hover:bg-slate-800 border border-slate-700 text-slate-200 font-semibold text-xs rounded-xl flex items-center justify-center gap-1 transition-all"
+                          className="prem-btn-secondary py-2 text-xs"
                         >
-                          View Details <ArrowRight className="w-3.5 h-3.5" />
+                          Details <ArrowRight className="w-3 h-3" />
                         </button>
                       </div>
                     </div>
@@ -250,14 +248,14 @@ export const CustomerAiCopilot: React.FC = () => {
         ))}
 
         {loading && (
-          <div className="flex items-center gap-3 p-4 bg-slate-900 border border-slate-800 rounded-2xl text-xs text-slate-400 w-fit">
-            <Sparkles className="w-4 h-4 text-emerald-400 animate-spin" />
-            <span>Analyzing real technical specifications and pricing bands...</span>
+          <div className="flex items-center gap-2.5 p-3.5 bg-surface-card border border-border-subtle rounded-xl text-xs text-txt-muted w-fit">
+            <Sparkles className="w-4 h-4 text-accent animate-spin" />
+            <span>Analyzing technical specifications and availability signals...</span>
           </div>
         )}
       </div>
 
-      {/* Input Form */}
+      {/* Input Box */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -269,15 +267,15 @@ export const CustomerAiCopilot: React.FC = () => {
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask for recommendations, specs comparison, budget matching..."
-          className="w-full bg-slate-900 border border-slate-700/80 rounded-2xl pl-5 pr-14 py-4 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 shadow-xl"
+          placeholder="Ask for specifications comparison, budget matching, or hardware trade-offs..."
+          className="prem-input w-full py-3.5 pr-12 text-xs"
         />
         <button
           type="submit"
           disabled={!query.trim() || loading}
-          className="absolute right-3 top-2.5 p-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-30 text-slate-950 rounded-xl transition-all shadow-md"
+          className="prem-btn-primary absolute right-2 top-2 p-2 rounded-lg"
         >
-          <Send className="w-4 h-4" />
+          <Send className="w-3.5 h-3.5" />
         </button>
       </form>
     </div>

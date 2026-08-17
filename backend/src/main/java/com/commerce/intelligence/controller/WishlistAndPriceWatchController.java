@@ -15,21 +15,21 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping({"/api", "/api/price-watch", "/api/price-watches", "/api/wishlist"})
 @RequiredArgsConstructor
 @Tag(name = "Wishlist & Price Watch", description = "Customer wishlist and price alert tracking")
 public class WishlistAndPriceWatchController {
 
     private final WishlistAndPriceWatchService wishlistService;
 
-    @GetMapping("/wishlist")
+    @GetMapping({"/wishlist", "/my-wishlist"})
     @Operation(summary = "Get Customer Wishlist", description = "Retrieves all products in the current user's wishlist")
     public ResponseEntity<List<Wishlist>> getWishlist() {
         Long userId = SecurityUtils.getCurrentUserId();
         return ResponseEntity.ok(wishlistService.getUserWishlist(userId));
     }
 
-    @PostMapping("/wishlist/toggle/{productId}")
+    @PostMapping({"/wishlist/toggle/{productId}", "/toggle/{productId}"})
     @Operation(summary = "Toggle Wishlist", description = "Adds or removes a product from the user's wishlist")
     public ResponseEntity<Map<String, Object>> toggleWishlist(@PathVariable Long productId) {
         Long userId = SecurityUtils.getCurrentUserId();
@@ -37,14 +37,14 @@ public class WishlistAndPriceWatchController {
         return ResponseEntity.ok(Map.of("productId", productId, "inWishlist", isAdded));
     }
 
-    @GetMapping("/price-watches")
+    @GetMapping({"/price-watches", "/my-watches", "/watches"})
     @Operation(summary = "Get User Price Watches", description = "Lists active price alerts configured by the customer")
     public ResponseEntity<List<PriceWatch>> getPriceWatches() {
         Long userId = SecurityUtils.getCurrentUserId();
         return ResponseEntity.ok(wishlistService.getUserPriceWatches(userId));
     }
 
-    @PostMapping("/price-watches/set")
+    @PostMapping({"/price-watches/set", "/set", "/watch"})
     @Operation(summary = "Set Price Watch Alert", description = "Configures a target price alert for automated customer notification")
     public ResponseEntity<PriceWatch> setPriceWatch(@RequestBody SetPriceWatchRequest request) {
         Long userId = SecurityUtils.getCurrentUserId();
