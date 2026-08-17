@@ -30,18 +30,64 @@
 
 /* Subtle background grid & quiet ambient depth */
 .bg-grid-subtle {
-  background-size: 32px 32px;
+  background-size: 40px 40px;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(to right, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
 }
 
 .bg-radial-subtle {
-  background: radial-gradient(circle at 50% 0%, rgba(45, 212, 168, 0.035) 0%, transparent 65%);
+  background: radial-gradient(circle at 75% 20%, rgba(45, 212, 168, 0.07) 0%, transparent 45%);
 }
 
 .bg-radial-secondary {
-  background: radial-gradient(circle at 100% 50%, rgba(113, 133, 216, 0.025) 0%, transparent 60%);
+  background: radial-gradient(circle at 20% 70%, rgba(113, 133, 216, 0.045) 0%, transparent 40%);
+}
+
+/* Ambient Floating Keyframes */
+@keyframes floatSlow1 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(0.4deg); }
+}
+
+@keyframes floatSlow2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(-0.5deg); }
+}
+
+@keyframes floatSlow3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(0.3deg); }
+}
+
+@keyframes particleDrift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(12px, -8px); }
+}
+
+.animate-float-1 {
+  animation: floatSlow1 9s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: floatSlow2 11s ease-in-out infinite;
+}
+
+.animate-float-3 {
+  animation: floatSlow3 13s ease-in-out infinite;
+}
+
+.animate-particle-drift {
+  animation: particleDrift 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-1,
+  .animate-float-2,
+  .animate-float-3,
+  .animate-particle-drift {
+    animation: none !important;
+  }
 }
 
 /* Refined Premium Cards (Linear/Stripe style) */

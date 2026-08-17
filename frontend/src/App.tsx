@@ -32,31 +32,34 @@ import { OrderRiskManagementPage } from './pages/admin/OrderRiskManagementPage';
 import { ReturnsManagementPage } from './pages/admin/ReturnsManagementPage';
 import { CouponsAndAuditPage } from './pages/admin/CouponsAndAuditPage';
 
+import { LivingBackground } from './components/layout/LivingBackground';
+
 // Customer Layout Layout Wrapper
 const CustomerLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-emerald-500 selection:text-slate-950">
+    <div className="min-h-screen flex flex-col bg-bg-primary text-txt-primary selection:bg-accent selection:text-bg-primary relative">
+      <LivingBackground />
       <ActivityFeedBanner />
       <Navbar />
-      <main className="flex-1">
+      <main className="flex-1 relative z-10">
         <Outlet />
       </main>
       <CartDrawer />
-      <footer className="bg-slate-900/60 border-t border-slate-800/80 py-8 px-4 text-center text-xs text-slate-400">
+      <footer className="relative z-10 bg-bg-secondary/80 backdrop-blur-md border-t border-border-primary/60 py-8 px-4 text-center text-xs text-txt-muted">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-200">AI Commerce Intelligence Platform</span>
+            <span className="font-semibold text-txt-primary">AI Commerce Intelligence Platform</span>
             <span>•</span>
-            <span>Demand Radar & Operations</span>
+            <span className="text-txt-secondary">Demand Radar & Real-Time Commerce</span>
           </div>
-          <div className="flex gap-4 text-[11px] text-slate-500">
-            <span>Customer Demand</span>
+          <div className="flex items-center gap-3 text-[11px] text-txt-muted">
+            <span className="text-accent font-medium">Customer Demand</span>
             <span>→</span>
-            <span>Demand Intelligence</span>
+            <span className="text-indigo-accent font-medium">Intelligence Engine</span>
             <span>→</span>
-            <span>Seller Action</span>
+            <span className="text-status-warning font-medium">Smart Deals</span>
             <span>→</span>
-            <span>Customer Benefit</span>
+            <span className="text-status-success font-medium">Guaranteed Margin</span>
           </div>
         </div>
       </footer>
@@ -67,11 +70,12 @@ const CustomerLayout: React.FC = () => {
 // Admin / Operations Layout Wrapper
 const AdminLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+    <div className="min-h-screen flex flex-col bg-bg-primary text-txt-primary relative">
+      <LivingBackground />
       <ActivityFeedBanner />
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden relative z-10">
         <AdminSidebar />
-        <main className="flex-1 overflow-y-auto bg-slate-950">
+        <main className="flex-1 overflow-y-auto bg-bg-primary/70 backdrop-blur-sm">
           <Outlet />
         </main>
       </div>
