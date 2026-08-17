@@ -1,5 +1,6 @@
 package com.commerce.intelligence.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.commerce.intelligence.model.enums.RoleType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -14,6 +15,7 @@ public class AuthDTOs {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class LoginRequest {
+        @JsonAlias({"username", "email"})
         @NotBlank(message = "Username or email is required")
         private String usernameOrEmail;
 
