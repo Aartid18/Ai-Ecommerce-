@@ -97,14 +97,14 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 sm:pt-28 px-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 sm:pt-28 px-4 bg-black/50 backdrop-blur-sm animate-fade-in">
       <div
-        className="w-full max-w-xl bg-bg-secondary border border-border-primary rounded-2xl shadow-2xl overflow-hidden text-txt-primary flex flex-col"
+        className="w-full max-w-xl bg-white border border-black/[0.12] rounded-3xl shadow-2xl overflow-hidden text-txt-primary flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Input Bar */}
-        <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border-subtle bg-surface-navbar">
-          <Search className="w-4 h-4 text-txt-muted flex-shrink-0" />
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-black/[0.06] bg-[#FDFBF7]">
+          <Search className="w-4 h-4 text-brand-crimson flex-shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -114,15 +114,15 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
               setSelectedIndex(0);
             }}
             placeholder="Type a command, page, or search query..."
-            className="w-full bg-transparent text-sm text-txt-primary placeholder-txt-muted focus:outline-none"
+            className="w-full bg-transparent text-sm text-txt-primary placeholder:text-txt-muted focus:outline-none font-sans"
           />
-          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono text-txt-muted bg-surface-card border border-border-subtle rounded">
+          <kbd className="hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono text-txt-muted bg-white border border-black/[0.08] rounded-full shadow-sm">
             ESC
           </kbd>
         </div>
 
         {/* Results List */}
-        <div className="max-h-80 overflow-y-auto p-2 space-y-1">
+        <div className="max-h-80 overflow-y-auto p-3 space-y-1 bg-white">
           {filtered.length === 0 ? (
             <div className="py-8 text-center text-xs text-txt-muted">
               No matching commands or destinations found.
@@ -136,33 +136,33 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
                   key={item.id}
                   onClick={() => handleSelect(item)}
                   onMouseEnter={() => setSelectedIndex(idx)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left text-xs transition-colors ${
+                  className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-left text-xs transition-colors ${
                     isSelected
-                      ? 'bg-surface-card-hover text-txt-primary border border-border-hover'
-                      : 'text-txt-secondary hover:bg-surface-card/60 border border-transparent'
+                      ? 'bg-brand-crimson/10 text-txt-primary border border-brand-crimson/25'
+                      : 'text-txt-secondary hover:bg-[#F7F4EE] border border-transparent'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className={`p-1.5 rounded-lg ${
-                        isSelected ? 'bg-accent/15 text-accent' : 'bg-surface-card text-txt-muted'
+                      className={`p-2 rounded-xl ${
+                        isSelected ? 'bg-brand-crimson text-white shadow-sm' : 'bg-[#F4F0E8] text-txt-secondary'
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <span className="font-medium text-txt-primary">{item.title}</span>
+                      <span className="font-semibold text-txt-primary">{item.title}</span>
                       <span className="text-[11px] text-txt-muted ml-2">{item.category}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
                     {item.badge && (
-                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent-subtle text-accent border border-accent-border font-medium">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-brand-crimson/10 text-brand-crimson border border-brand-crimson/20 font-bold">
                         {item.badge}
                       </span>
                     )}
-                    {isSelected && <ArrowRight className="w-3.5 h-3.5 text-accent" />}
+                    {isSelected && <ArrowRight className="w-3.5 h-3.5 text-brand-crimson" />}
                   </div>
                 </button>
               );
@@ -171,20 +171,20 @@ export const CommandPalette: React.FC<{ isOpen: boolean; onClose: () => void }> 
         </div>
 
         {/* Footer info */}
-        <div className="px-4 py-2.5 bg-bg-primary border-t border-border-subtle flex items-center justify-between text-[11px] text-txt-muted">
+        <div className="px-5 py-3 bg-[#F7F4EE] border-t border-black/[0.06] flex items-center justify-between text-[11px] text-txt-muted">
           <div className="flex items-center gap-3">
             <span>
-              <kbd className="px-1.5 py-0.5 bg-surface-card border border-border-subtle rounded text-[10px]">↑</kbd>{' '}
-              <kbd className="px-1.5 py-0.5 bg-surface-card border border-border-subtle rounded text-[10px]">↓</kbd>{' '}
+              <kbd className="px-2 py-0.5 bg-white border border-black/[0.08] rounded-full text-[10px] shadow-sm">↑</kbd>{' '}
+              <kbd className="px-2 py-0.5 bg-white border border-black/[0.08] rounded-full text-[10px] shadow-sm">↓</kbd>{' '}
               Navigate
             </span>
             <span>
-              <kbd className="px-1.5 py-0.5 bg-surface-card border border-border-subtle rounded text-[10px]">↵</kbd>{' '}
+              <kbd className="px-2 py-0.5 bg-white border border-black/[0.08] rounded-full text-[10px] shadow-sm">↵</kbd>{' '}
               Select
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <Command className="w-3 h-3 text-txt-muted" />
+          <div className="flex items-center gap-1 font-semibold text-txt-secondary">
+            <Command className="w-3 h-3 text-brand-crimson" />
             <span>AI Commerce Command</span>
           </div>
         </div>

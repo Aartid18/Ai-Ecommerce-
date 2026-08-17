@@ -66,50 +66,50 @@ export const ActivityFeedBanner: React.FC = () => {
   return (
     <>
       {/* Real-Time Operations Bar */}
-      <div className="bg-surface-sidebar border-b border-border-subtle text-xs px-4 py-1.5 flex items-center justify-between text-txt-secondary z-40">
+      <div className="bg-[#171717] border-b border-black/[0.15] text-xs px-4 py-2 flex items-center justify-between text-[#F4F0E8] z-40">
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="flex items-center gap-2 flex-shrink-0">
             <span className="relative flex h-2 w-2">
               <span
-                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 ${
-                  isConnected ? 'bg-accent' : 'bg-status-warning'
+                className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+                  isConnected ? 'bg-brand-crimson' : 'bg-brand-gold'
                 }`}
               />
               <span
                 className={`relative inline-flex rounded-full h-2 w-2 ${
-                  isConnected ? 'bg-accent' : 'bg-status-warning'
+                  isConnected ? 'bg-brand-crimson' : 'bg-brand-gold'
                 }`}
               />
             </span>
-            <span className="text-[10px] font-semibold text-txt-muted uppercase tracking-wider hidden sm:inline">
-              Real-Time Operations
+            <span className="text-[10px] font-bold text-white/90 uppercase tracking-widest hidden sm:inline">
+              REAL-TIME COMMERCE
             </span>
           </div>
 
-          <div className="h-3 w-px bg-border-primary flex-shrink-0 hidden sm:block" />
+          <div className="h-3 w-px bg-white/20 flex-shrink-0 hidden sm:block" />
 
           {currentEvent ? (
             <div
               onClick={() => {
                 if (currentEvent.linkUrl) navigate(currentEvent.linkUrl);
               }}
-              className="flex items-center gap-2 text-txt-secondary hover:text-accent cursor-pointer transition-colors truncate"
+              className="flex items-center gap-2 text-white/80 hover:text-white cursor-pointer transition-colors truncate"
             >
               {(() => {
                 const badge = getEventBadge(currentEvent.type);
                 const Icon = badge.icon;
                 return (
-                  <span className={`p-0.5 rounded border ${badge.bg} ${badge.color}`}>
+                  <span className={`p-0.5 rounded ${badge.bg} ${badge.color}`}>
                     <Icon className="w-3 h-3" />
                   </span>
                 );
               })()}
-              <span className="truncate text-[11px] text-txt-primary">{currentEvent.message}</span>
-              <span className="text-[10px] text-txt-muted flex-shrink-0">Just now</span>
+              <span className="truncate text-[11px] text-white font-medium">{currentEvent.message}</span>
+              <span className="text-[10px] text-white/60 flex-shrink-0">Just now</span>
             </div>
           ) : (
-            <div className="text-txt-muted text-[11px] truncate">
-              Live event stream active — synchronizing orders, inventory, and demand radar signals
+            <div className="text-white/70 text-[11px] truncate font-sans">
+              Live telemetry stream active — synchronizing orders, inventory, and demand signals
             </div>
           )}
         </div>
@@ -117,7 +117,7 @@ export const ActivityFeedBanner: React.FC = () => {
         <div className="flex items-center gap-3 flex-shrink-0">
           <button
             onClick={() => setExpanded(!expanded)}
-            className="text-[11px] text-txt-muted hover:text-txt-primary transition-colors flex items-center gap-1"
+            className="text-[11px] text-white/80 hover:text-white transition-colors flex items-center gap-1 font-semibold"
           >
             {events.length > 0 ? `${events.length} Live Events` : 'Live Stream'}
           </button>

@@ -141,112 +141,103 @@ export const NotificationDrawer: React.FC<{ isOpen: boolean; onClose: () => void
       {/* Backdrop */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
       />
 
       {/* Drawer */}
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-bg-secondary border-l border-border-primary flex flex-col text-txt-primary shadow-2xl animate-slide-in">
+        <div className="w-screen max-w-md bg-[#FDFBF7] border-l border-black/[0.10] flex flex-col text-txt-primary shadow-2xl animate-slide-in">
           {/* Header */}
-          <div className="p-5 border-b border-border-subtle flex items-center justify-between bg-surface-navbar">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-surface-card border border-border-subtle text-accent">
+          <div className="p-5 border-b border-black/[0.06] flex items-center justify-between bg-white">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-brand-crimson/10 text-brand-crimson flex items-center justify-center">
                 <Bell className="w-4 h-4" />
               </div>
               <div>
-                <h2 className="text-sm font-bold text-txt-primary">Notifications</h2>
-                <p className="text-[11px] text-txt-muted">Operational & commerce alerts</p>
+                <h2 className="text-sm font-serif font-bold text-txt-primary">Notifications</h2>
+                <p className="text-[11px] text-txt-muted">Operational & demand alerts</p>
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleMarkAllRead}
-                className="p-1.5 text-txt-muted hover:text-txt-primary text-xs flex items-center gap-1 rounded-lg hover:bg-surface-card"
-                title="Mark all as read"
-              >
-                <CheckCheck className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={onClose}
-                className="p-1.5 text-txt-muted hover:text-txt-primary rounded-lg hover:bg-surface-card"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+            <button
+              onClick={onClose}
+              className="p-1.5 text-txt-muted hover:text-txt-primary rounded-full hover:bg-[#F4F0E8] transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
 
-          {/* Filter Tabs */}
-          <div className="flex items-center gap-1 p-2 border-b border-border-subtle bg-bg-primary overflow-x-auto text-[11px]">
+          {/* Category Tabs */}
+          <div className="flex items-center gap-1.5 p-3 overflow-x-auto border-b border-black/[0.06] bg-white">
             {(['ALL', 'ORDERS', 'INVENTORY', 'DEMAND', 'RISK', 'RETURNS'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-2.5 py-1 rounded-lg font-medium transition-colors whitespace-nowrap ${
+                className={`px-3 py-1 text-[11px] font-semibold rounded-full whitespace-nowrap transition-colors ${
                   activeTab === tab
-                    ? 'bg-surface-card text-accent border border-border-hover'
-                    : 'text-txt-muted hover:text-txt-secondary'
+                    ? 'bg-brand-crimson text-white shadow-sm'
+                    : 'text-txt-secondary hover:text-txt-primary hover:bg-[#F4F0E8]'
                 }`}
               >
-                {tab}
+                {tab.toLowerCase()}
               </button>
             ))}
           </div>
 
-          {/* Notifications List */}
+          {/* Action Bar */}
+          <div className="px-5 py-2.5 bg-[#F7F4EE] border-b border-black/[0.04] flex items-center justify-between text-xs text-txt-muted">
+            <span>{filtered.length} updates</span>
+            <button
+              onClick={handleMarkAllRead}
+              className="text-brand-crimson hover:underline flex items-center gap-1 text-[11px] font-semibold"
+            >
+              <CheckCheck className="w-3 h-3" /> Mark all read
+            </button>
+          </div>
+
+          {/* List */}
           <div className="flex-1 overflow-y-auto p-4 space-y-2.5">
             {loading ? (
-              <div className="py-12 text-center text-xs text-txt-muted">Loading alerts...</div>
+              <div className="space-y-3 p-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-16 bg-white rounded-2xl animate-pulse border border-black/[0.04]" />
+                ))}
+              </div>
             ) : filtered.length === 0 ? (
-              <div className="py-16 text-center space-y-2">
-                <Bell className="w-8 h-8 text-txt-disabled mx-auto" />
-                <div className="text-xs text-txt-muted">No notifications in this category.</div>
+              <div className="text-center py-16 text-txt-muted space-y-2">
+                <Bell className="w-8 h-8 text-txt-muted/40 mx-auto" />
+                <div className="text-xs font-semibold text-txt-primary">No notifications</div>
+                <div className="text-[11px]">You're all caught up with events.</div>
               </div>
             ) : (
-              filtered.map((item) => (
+              filtered.map((notif) => (
                 <div
-                  key={item.id}
-                  onClick={() => handleItemClick(item)}
-                  className={`p-3.5 rounded-xl border transition-all cursor-pointer ${
-                    item.isRead
-                      ? 'bg-surface-card/40 border-border-subtle text-txt-secondary hover:border-border-hover'
-                      : 'bg-surface-card border-border-primary text-txt-primary hover:border-accent-border'
+                  key={notif.id}
+                  onClick={() => handleItemClick(notif)}
+                  className={`p-3.5 rounded-2xl border transition-all cursor-pointer flex gap-3 items-start ${
+                    notif.isRead
+                      ? 'bg-white border-black/[0.06] text-txt-secondary hover:border-black/[0.15] shadow-prem-sm'
+                      : 'bg-white border-brand-crimson/30 shadow-prem-md text-txt-primary'
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-2.5">
-                      <div className="p-1.5 rounded-lg bg-bg-primary border border-border-subtle mt-0.5">
-                        {getIcon(item.type)}
-                      </div>
-                      <div>
-                        <div className="text-xs font-semibold text-txt-primary flex items-center gap-1.5">
-                          {item.title}
-                          {!item.isRead && (
-                            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-                          )}
-                        </div>
-                        <p className="text-[11px] text-txt-secondary mt-0.5 leading-relaxed">
-                          {item.message}
-                        </p>
-                      </div>
-                    </div>
-
-                    <ArrowUpRight className="w-3.5 h-3.5 text-txt-muted flex-shrink-0" />
+                  <div className="p-2 rounded-xl bg-[#F7F4EE] border border-black/[0.04] flex-shrink-0 mt-0.5">
+                    {getIcon(notif.type)}
                   </div>
-
-                  {item.createdAt && (
-                    <div className="text-[10px] text-txt-muted mt-2 pl-8">
-                      {item.createdAt}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-0.5">
+                      <h4 className="text-xs font-bold text-txt-primary truncate">{notif.title}</h4>
+                      <span className="text-[10px] text-txt-muted whitespace-nowrap">{notif.createdAt || 'Just now'}</span>
                     </div>
-                  )}
+                    <p className="text-xs text-txt-secondary leading-snug">{notif.message}</p>
+                  </div>
+                  <ArrowUpRight className="w-3.5 h-3.5 text-txt-muted flex-shrink-0 mt-0.5" />
                 </div>
               ))
             )}
           </div>
 
           {/* Footer */}
-          <div className="p-3 bg-bg-primary border-t border-border-subtle text-center text-[11px] text-txt-muted">
-            Live event sync active
+          <div className="p-3 bg-white border-t border-black/[0.06] text-center text-[11px] text-txt-muted">
+            Live telemetry stream active
           </div>
         </div>
       </div>

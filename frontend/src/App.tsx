@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, Link } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -45,21 +45,75 @@ const CustomerLayout: React.FC = () => {
         <Outlet />
       </main>
       <CartDrawer />
-      <footer className="relative z-10 bg-bg-secondary/80 backdrop-blur-md border-t border-border-primary/60 py-8 px-4 text-center text-xs text-txt-muted">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold text-txt-primary">AI Commerce Intelligence Platform</span>
-            <span>•</span>
-            <span className="text-txt-secondary">Demand Radar & Real-Time Commerce</span>
+      {/* Large Premium Editorial Footer */}
+      <footer className="relative z-10 bg-[#171717] text-[#F4F0E8] pt-16 pb-12 px-6 sm:px-12 mt-16 rounded-t-[48px] shadow-2xl border-t border-black/20">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-white/10">
+            {/* Column 1: Brand & Vision */}
+            <div className="md:col-span-5 space-y-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-brand-crimson text-white flex items-center justify-center font-bold text-sm">
+                  AI
+                </div>
+                <div className="font-serif text-xl font-normal tracking-wide text-white">
+                  AI Commerce <span className="text-brand-crimson italic">Intelligence</span>
+                </div>
+              </div>
+              <p className="text-xs text-white/70 max-w-sm leading-relaxed">
+                Next-generation editorial hardware marketplace backed by real-time demand radar signals, price-drop telemetry, and autonomous inventory operations.
+              </p>
+              <div className="pt-2 flex items-center gap-3 text-xs text-white/60">
+                <span className="w-2 h-2 rounded-full bg-brand-crimson animate-pulse" />
+                <span>Demand Intelligence Engine Live</span>
+              </div>
+            </div>
+
+            {/* Column 2: Platform Links */}
+            <div className="md:col-span-2 space-y-3 text-xs">
+              <div className="font-bold text-white uppercase tracking-widest text-[11px]">Platform</div>
+              <ul className="space-y-2 text-white/70">
+                <li><Link to="/customer/products" className="hover:text-white transition-colors">Curated Catalog</Link></li>
+                <li><Link to="/admin/demand-radar" className="hover:text-white transition-colors">Demand Radar</Link></li>
+                <li><Link to="/customer/ai-assistant" className="hover:text-white transition-colors">Shopping Copilot</Link></li>
+                <li><Link to="/customer/dashboard" className="hover:text-white transition-colors">Price Watches</Link></li>
+              </ul>
+            </div>
+
+            {/* Column 3: Operations & Roles */}
+            <div className="md:col-span-2 space-y-3 text-xs">
+              <div className="font-bold text-white uppercase tracking-widest text-[11px]">Operations</div>
+              <ul className="space-y-2 text-white/70">
+                <li><Link to="/admin/dashboard" className="hover:text-white transition-colors">Executive Briefing</Link></li>
+                <li><Link to="/inventory/dashboard" className="hover:text-white transition-colors">Inventory Telemetry</Link></li>
+                <li><Link to="/admin/preorders" className="hover:text-white transition-colors">Smart Pre-Orders</Link></li>
+                <li><Link to="/admin/orders" className="hover:text-white transition-colors">Order Risk Review</Link></li>
+              </ul>
+            </div>
+
+            {/* Column 4: Governance & Support */}
+            <div className="md:col-span-3 space-y-3 text-xs">
+              <div className="font-bold text-white uppercase tracking-widest text-[11px]">Trust & Assurance</div>
+              <p className="text-white/70 leading-relaxed text-[11px]">
+                Every verified hardware order is backed by automated stock-reservation guarantees and real-time reverse logistics support.
+              </p>
+              <div className="pt-1 text-[11px] text-white/50">
+                Enterprise Support: <span className="text-white font-mono">ops@commerce.ai</span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-3 text-[11px] text-txt-muted">
-            <span className="text-accent font-medium">Customer Demand</span>
-            <span>→</span>
-            <span className="text-indigo-accent font-medium">Intelligence Engine</span>
-            <span>→</span>
-            <span className="text-status-warning font-medium">Smart Deals</span>
-            <span>→</span>
-            <span className="text-status-success font-medium">Guaranteed Margin</span>
+
+          {/* Bottom Copyright & Legal */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-white/50">
+            <div>
+              © 2026 AI Commerce Intelligence Platform. All rights reserved.
+            </div>
+            <div className="flex items-center gap-6">
+              <span className="hover:text-white cursor-pointer transition-colors">Privacy Policy</span>
+              <span>•</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Terms of Service</span>
+              <span>•</span>
+              <span className="hover:text-white cursor-pointer transition-colors">Security Audit</span>
+            </div>
           </div>
         </div>
       </footer>
