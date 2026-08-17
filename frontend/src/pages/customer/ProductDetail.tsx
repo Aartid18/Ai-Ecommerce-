@@ -387,26 +387,32 @@ export const ProductDetail: React.FC = () => {
             Frequently Purchased Together
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {frequentlyBought.map((rec, i) => (
-              <div
-                key={i}
-                onClick={() => navigate(`/customer/product/${rec.product.id}`)}
-                className="prem-card-hover p-4 rounded-2xl border border-black/[0.06] cursor-pointer flex flex-col justify-between bg-[#FAF8F4]"
-              >
-                <div className="h-28 bg-white rounded-xl p-2 flex items-center justify-center mb-2">
-                  <img
-                    src={rec.product.mainImageUrl}
-                    alt={rec.product.name}
-                    className="max-h-full max-w-full object-contain mix-blend-multiply"
-                  />
+            {frequentlyBought.map((rec, i) => {
+              const prod = rec.product || rec;
+              if (!prod) return null;
+              return (
+                <div
+                  key={i}
+                  onClick={() => navigate(`/customer/product/${prod.id}`)}
+                  className="prem-card-hover p-4 rounded-2xl border border-black/[0.06] cursor-pointer flex flex-col justify-between bg-[#FAF8F4]"
+                >
+                  <div className="h-28 bg-white rounded-xl p-2 flex items-center justify-center mb-2">
+                    <img
+                      src={prod.mainImageUrl || ''}
+                      alt={prod.name || ''}
+                      className="max-h-full max-w-full object-contain mix-blend-multiply"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] text-brand-crimson font-bold uppercase">{rec.reason || 'Commonly paired'}</span>
+                    <h4 className="text-xs font-bold text-txt-primary line-clamp-1 mt-0.5">{prod.name}</h4>
+                    <div className="text-xs font-bold text-txt-primary mt-1 font-sans">
+                      ₹{(prod.finalPrice || prod.price || 0).toLocaleString()}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-brand-crimson font-bold uppercase">{rec.reason}</span>
-                  <h4 className="text-xs font-bold text-txt-primary line-clamp-1 mt-0.5">{rec.product.name}</h4>
-                  <div className="text-xs font-bold text-txt-primary mt-1">₹{rec.product.finalPrice.toLocaleString()}</div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
