@@ -69,8 +69,10 @@ export const ProductDetail: React.FC = () => {
   const fetchFrequentlyBought = async (productId: number) => {
     try {
       const res = await api.get(`/recommendations/frequently-bought-together/${productId}`);
-      setFrequentlyBought(res.data);
-    } catch (err) {}
+      setFrequentlyBought(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      setFrequentlyBought([]);
+    }
   };
 
   if (loading) {

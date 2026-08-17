@@ -33,10 +33,12 @@ export const OrderRiskManagementPage: React.FC = () => {
         api.get('/orders/manage/high-risk'),
       ]);
 
-      if (allRes.status === 'fulfilled') setOrders(allRes.value.data);
-      if (riskRes.status === 'fulfilled') setHighRiskOrders(riskRes.value.data);
+      if (allRes.status === 'fulfilled') setOrders(Array.isArray(allRes.value.data) ? allRes.value.data : []);
+      if (riskRes.status === 'fulfilled') setHighRiskOrders(Array.isArray(riskRes.value.data) ? riskRes.value.data : []);
     } catch (err) {
       console.error('Failed to load orders', err);
+      setOrders([]);
+      setHighRiskOrders([]);
     } finally {
       setLoading(false);
     }

@@ -43,13 +43,18 @@ export const CustomerDashboard: React.FC = () => {
         api.get('/recommendations/personalized'),
       ]);
 
-      if (ordRes.status === 'fulfilled') setOrders(ordRes.value.data);
-      if (watchRes.status === 'fulfilled') setPriceWatches(watchRes.value.data);
-      if (preRes.status === 'fulfilled') setPreOrders(preRes.value.data);
-      if (retRes.status === 'fulfilled') setReturns(retRes.value.data);
-      if (recRes.status === 'fulfilled') setRecommendations(recRes.value.data);
+      if (ordRes.status === 'fulfilled') setOrders(Array.isArray(ordRes.value.data) ? ordRes.value.data : []);
+      if (watchRes.status === 'fulfilled') setPriceWatches(Array.isArray(watchRes.value.data) ? watchRes.value.data : []);
+      if (preRes.status === 'fulfilled') setPreOrders(Array.isArray(preRes.value.data) ? preRes.value.data : []);
+      if (retRes.status === 'fulfilled') setReturns(Array.isArray(retRes.value.data) ? retRes.value.data : []);
+      if (recRes.status === 'fulfilled') setRecommendations(Array.isArray(recRes.value.data) ? recRes.value.data : []);
     } catch (err) {
       console.error('Error loading customer dashboard', err);
+      setOrders([]);
+      setPriceWatches([]);
+      setPreOrders([]);
+      setReturns([]);
+      setRecommendations([]);
     } finally {
       setLoading(false);
     }

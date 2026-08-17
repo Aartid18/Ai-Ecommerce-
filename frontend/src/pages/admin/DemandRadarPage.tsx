@@ -31,10 +31,12 @@ export const DemandRadarPage: React.FC = () => {
         api.get('/demand-radar/smart-deals'),
       ]);
 
-      if (sigRes.status === 'fulfilled') setSignals(sigRes.value.data);
-      if (dealRes.status === 'fulfilled') setDeals(dealRes.value.data);
+      if (sigRes.status === 'fulfilled') setSignals(Array.isArray(sigRes.value.data) ? sigRes.value.data : []);
+      if (dealRes.status === 'fulfilled') setDeals(Array.isArray(dealRes.value.data) ? dealRes.value.data : []);
     } catch (err) {
       console.error('Failed to load demand radar signals', err);
+      setSignals([]);
+      setDeals([]);
     } finally {
       setLoading(false);
     }

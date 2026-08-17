@@ -56,10 +56,12 @@ export const StoreCatalog: React.FC = () => {
         api.get('/products/categories'),
         api.get('/products/brands'),
       ]);
-      setCategories(catRes.data);
-      setBrands(brandRes.data);
+      setCategories(Array.isArray(catRes.data) ? catRes.data : []);
+      setBrands(Array.isArray(brandRes.data) ? brandRes.data : []);
     } catch (err) {
       console.error('Failed to load categories/brands', err);
+      setCategories([]);
+      setBrands([]);
     }
   };
 
@@ -77,10 +79,12 @@ export const StoreCatalog: React.FC = () => {
       params.append('size', '12');
 
       const res = await api.get(`/products?${params.toString()}`);
-      setProducts(res.data.content || []);
-      setTotalPages(res.data.totalPages || 1);
+      const content = Array.isArray(res.data?.content) ? res.data.content : (Array.isArray(res.data) ? res.data : []);
+      setProducts(content);
+      setTotalPages(res.data?.totalPages || 1);
     } catch (err) {
       console.error('Failed to load products', err);
+      setProducts([]);
     } finally {
       setLoading(false);
     }

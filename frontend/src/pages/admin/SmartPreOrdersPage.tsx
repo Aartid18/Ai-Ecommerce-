@@ -29,10 +29,12 @@ export const SmartPreOrdersPage: React.FC = () => {
         api.get('/preorders/all-pending'),
       ]);
 
-      if (sumRes.status === 'fulfilled') setSummaries(sumRes.value.data);
-      if (allRes.status === 'fulfilled') setAllPreOrders(allRes.value.data);
+      if (sumRes.status === 'fulfilled') setSummaries(Array.isArray(sumRes.value.data) ? sumRes.value.data : []);
+      if (allRes.status === 'fulfilled') setAllPreOrders(Array.isArray(allRes.value.data) ? allRes.value.data : []);
     } catch (err) {
       console.error('Failed to load pre-order intelligence', err);
+      setSummaries([]);
+      setAllPreOrders([]);
     } finally {
       setLoading(false);
     }

@@ -22,9 +22,10 @@ export const ReturnsManagementPage: React.FC = () => {
     setLoading(true);
     try {
       const res = await api.get('/returns/manage');
-      setReturns(res.data);
+      setReturns(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Failed to load returns', err);
+      setReturns([]);
     } finally {
       setLoading(false);
     }

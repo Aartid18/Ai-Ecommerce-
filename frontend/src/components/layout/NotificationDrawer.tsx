@@ -44,38 +44,41 @@ export const NotificationDrawer: React.FC<{ isOpen: boolean; onClose: () => void
     setLoading(true);
     try {
       const res = await api.get('/notifications/my');
-      setNotifications(res.data);
+      if (Array.isArray(res.data) && res.data.length > 0) {
+        setNotifications(res.data);
+      } else {
+        setNotifications([
+          {
+            id: 101,
+            title: 'Price Watch Alert',
+            message: 'Wireless Studio Headphones target price met (₹2,599).',
+            type: 'DEMAND',
+            linkUrl: '/customer/product/5',
+            isRead: false,
+            createdAt: 'Just now',
+          },
+          {
+            id: 102,
+            title: 'Stockout Predicted',
+            message: 'USB-C Hub may reach zero stock in under 48 hours.',
+            type: 'INVENTORY',
+            linkUrl: '/admin/inventory',
+            isRead: false,
+            createdAt: '12m ago',
+          },
+          {
+            id: 103,
+            title: 'High-Risk Order Flagged',
+            message: 'Order #ORD-10287-RISK flagged with risk score 82/100.',
+            type: 'RISK',
+            linkUrl: '/admin/orders',
+            isRead: true,
+            createdAt: '1h ago',
+          },
+        ]);
+      }
     } catch (err) {
-      // Fallback default notifications if none in DB
-      setNotifications([
-        {
-          id: 101,
-          title: 'Price Watch Alert',
-          message: 'Wireless Studio Headphones target price met (₹2,599).',
-          type: 'DEMAND',
-          linkUrl: '/customer/product/5',
-          isRead: false,
-          createdAt: 'Just now',
-        },
-        {
-          id: 102,
-          title: 'Stockout Predicted',
-          message: 'USB-C Hub may reach zero stock in under 48 hours.',
-          type: 'INVENTORY',
-          linkUrl: '/admin/inventory',
-          isRead: false,
-          createdAt: '12m ago',
-        },
-        {
-          id: 103,
-          title: 'High-Risk Order Flagged',
-          message: 'Order #ORD-10287-RISK flagged with risk score 82/100.',
-          type: 'RISK',
-          linkUrl: '/admin/orders',
-          isRead: true,
-          createdAt: '1h ago',
-        },
-      ]);
+      setNotifications([]);
     } finally {
       setLoading(false);
     }

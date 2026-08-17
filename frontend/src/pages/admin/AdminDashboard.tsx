@@ -49,7 +49,7 @@ export const AdminDashboard: React.FC = () => {
 
       if (briefRes.status === 'fulfilled') setBriefing(briefRes.value.data);
       if (whyRes.status === 'fulfilled') setWhyRevenue(whyRes.value.data);
-      if (chartRes.status === 'fulfilled') setSalesTrend(chartRes.value.data);
+      if (chartRes.status === 'fulfilled') setSalesTrend(Array.isArray(chartRes.value.data) ? chartRes.value.data : []);
     } catch (err) {
       console.error('Failed to load dashboard analytics', err);
     } finally {

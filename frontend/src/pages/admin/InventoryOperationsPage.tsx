@@ -57,12 +57,15 @@ export const InventoryOperationsPage: React.FC = () => {
         api.get('/products?size=50'),
       ]);
 
-      if (healthRes.status === 'fulfilled') setHealthItems(healthRes.value.data);
-      if (deadRes.status === 'fulfilled') setDeadStock(deadRes.value.data);
-      if (reorderRes.status === 'fulfilled') setReorders(reorderRes.value.data);
-      if (poRes.status === 'fulfilled') setPurchaseOrders(poRes.value.data);
-      if (txRes.status === 'fulfilled') setTransactions(txRes.value.data);
-      if (prodRes.status === 'fulfilled') setProducts(prodRes.value.data.content || []);
+      if (healthRes.status === 'fulfilled') setHealthItems(Array.isArray(healthRes.value.data) ? healthRes.value.data : []);
+      if (deadRes.status === 'fulfilled') setDeadStock(Array.isArray(deadRes.value.data) ? deadRes.value.data : []);
+      if (reorderRes.status === 'fulfilled') setReorders(Array.isArray(reorderRes.value.data) ? reorderRes.value.data : []);
+      if (poRes.status === 'fulfilled') setPurchaseOrders(Array.isArray(poRes.value.data) ? poRes.value.data : []);
+      if (txRes.status === 'fulfilled') setTransactions(Array.isArray(txRes.value.data) ? txRes.value.data : []);
+      if (prodRes.status === 'fulfilled') {
+        const pList = Array.isArray(prodRes.value.data?.content) ? prodRes.value.data.content : (Array.isArray(prodRes.value.data) ? prodRes.value.data : []);
+        setProducts(pList);
+      }
     } catch (err) {
       console.error('Failed to load inventory data', err);
     } finally {
