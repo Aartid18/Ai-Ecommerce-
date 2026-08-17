@@ -31,7 +31,7 @@ public class InventoryController {
     private final SupplierRepository supplierRepository;
     private final PurchaseOrderRepository purchaseOrderRepository;
 
-    @GetMapping("/health")
+    @GetMapping({"/health", "/health-scorecard"})
     @Operation(summary = "Inventory Health Scorecard", description = "Calculates stock health scores (CRITICAL, LOW_STOCK, HEALTHY, OVERSTOCKED), velocity, and stockout estimates")
     public ResponseEntity<List<InventoryHealthDTO>> getInventoryHealth() {
         return ResponseEntity.ok(inventoryService.getInventoryHealthOverview());
@@ -44,7 +44,7 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.getDeadStockAnalytics(daysThreshold));
     }
 
-    @GetMapping("/reorder-recommendations")
+    @GetMapping({"/reorder-recommendations", "/reorders"})
     @Operation(summary = "Reorder Recommendations", description = "Calculates lead-time aware reorder quantities and supplier suggestions")
     public ResponseEntity<List<ReorderRecommendationDTO>> getReorderRecommendations() {
         return ResponseEntity.ok(inventoryService.getReorderRecommendations());

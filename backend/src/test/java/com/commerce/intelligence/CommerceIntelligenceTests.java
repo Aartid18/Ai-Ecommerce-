@@ -62,6 +62,18 @@ public class CommerceIntelligenceTests {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private PreOrderService preOrderService;
+
+    @Autowired
+    private CustomerAiService customerAiService;
+
+    @Autowired
+    private SellerAiService sellerAiService;
+
+    @Autowired
+    private CouponService couponService;
+
     @Test
     @DisplayName("1. User Registration & Authentication Flow")
     void testUserAuthFlow() throws Exception {
@@ -151,5 +163,100 @@ public class CommerceIntelligenceTests {
         assertNotNull(order.getOrderNumber());
         assertTrue(order.getEstimatedProfit() > 0);
         assertNotNull(order.getRiskScore());
+    }
+
+    @Test
+    @DisplayName("6. Smart Pre-Order Demand Allocation & Buffer Calculation")
+    void testPreOrderDemandCalculationAndFulfillment() {
+        Product keyboard = productRepository.findBySku("GAM-KEYC-Q1PRO").orElseThrow();
+        var summary = preOrderService.getPreOrderDemandSummary(keyboard.getId());
+
+        assertNotNull(summary);
+        assertEquals(keyboard.getId(), summary.getProductId());
+        assertTrue(summary.getRecommendedPurchaseQuantity() > 0);
+        assertTrue(summary.getRecommendedStockQuantity() >= summary.getTotalPreOrdersCount());
+
+        // Test bulk summary retrieval
+        var allSummaries = preOrderService.getAllPreOrderDemandSummaries();
+        assertFalse(allSummaries.isEmpty());
+    }
+
+    @Test
+    @DisplayName("7. Dead Stock Detection & Tied Capital Calculation")
+    void testDeadStockDetection() {
+        var deadStockList = inventoryService.getDeadStockAnalytics(30);
+        assertNotNull(deadStockList);
+        assertFalse(deadStockList.isEmpty());
+        assertTrue(deadStockList.stream().anyMatch(d -> d.getSku().equals("ERG-BOSE-CUSHION")));
+    }
+
+    @Test
+    @DisplayName("8. High-Risk Order Detection and Manual Review Flow")
+    void testHighRiskOrderFlaggingAndReview() {
+        var user = userRepository.findByUsername("customer2").orElseThrow();
+        Product product = productRepository.findBySku("WEA-APPL-ULTRA2").orElseThrow();
+
+        cartService.addToCart(user.getId(), new AddToCartRequest(product.getId(), null, 1));
+
+        CheckoutRequest highRiskCheckout = new CheckoutRequest();
+        highRiskCheckout.setCustomerName("Priya Sharma");
+        highRiskCheckout.setCustomerEmail("priya.sharma@example.com");
+        highRiskCheckout.setPhone("+91 98234 56789");
+        highRiskCheckout.setShippingAddress("Unknown Remote Island Suite 404");
+        highRiskCheckout.setPaymentMethod(PaymentMethod.COD);
+        highRiskCheckout.setFailedPaymentAttempts(4); // Trigger high risk
+
+        var order = orderService.createOrderFromCart(user.getId(), highRiskCheckout);
+        assertNotNull(order);
+        assertTrue(order.getRiskScore() >= 50);
+
+        var highRiskList = orderService.getHighRiskOrders();
+        assertFalse(highRiskList.isEmpty());
+
+        // Perform manual review
+        var reviewReq = new com.commerce.intelligence.dto.OrderDTOs.RiskReviewRequest(
+                "APPROVE", "Verified customer identity via phone"
+        );
+        var reviewedOrder = orderService.reviewOrderRisk(order.getId(), reviewReq, "order_mgr");
+        assertTrue(reviewedOrder.getIsRiskReviewed());
+        assertEquals("order_mgr", reviewedOrder.getReviewedBy());
+    }
+
+    @Test
+    @DisplayName("9. Customer AI Copilot Grounded Spec Recommendations")
+    void testCustomerAiCopilotGroundedRecommendations() {
+        var req = new com.commerce.intelligence.dto.AiDTOs.CustomerAiQueryRequest(
+                "I need a laptop for coding under ₹70,000 with good RAM",
+                70000.0,
+                null
+        );
+        var response = customerAiService.getShoppingRecommendations(req);
+
+        assertNotNull(response);
+        assertFalse(response.getRecommendations().isEmpty());
+        assertTrue(response.getRecommendations().get(0).getPrice() <= 70000.0);
+        assertNotNull(response.getRecommendations().get(0).getTradeOff());
+    }
+
+    @Test
+    @DisplayName("10. Seller AI Copilot Operational Insights")
+    void testSellerAiCopilotOperationalQueries() {
+        var req = new com.commerce.intelligence.dto.AiDTOs.SellerAiQueryRequest(
+                "Which products are at risk of stockout next week?"
+        );
+        var response = sellerAiService.analyzeSellerQuery(req);
+
+        assertNotNull(response);
+        assertFalse(response.getActualDataPoints().isEmpty());
+        assertFalse(response.getActionRecommendations().isEmpty());
+    }
+
+    @Test
+    @DisplayName("11. Coupon Validation and Usage Rules")
+    void testCouponValidationAndApplication() {
+        var coupon = couponService.validateCoupon("WELCOME10", 1L, 2000.0);
+        assertNotNull(coupon);
+        assertTrue(coupon.getValid());
+        assertEquals(200.0, coupon.getCalculatedDiscountAmount()); // 10% of 2000
     }
 }

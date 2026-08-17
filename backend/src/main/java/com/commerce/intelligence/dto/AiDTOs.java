@@ -1,5 +1,6 @@
 package com.commerce.intelligence.dto;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.*;
 
 import java.util.List;
@@ -10,6 +11,7 @@ public class AiDTOs {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CustomerAiQueryRequest {
+        @JsonAlias({"userQuery", "prompt"})
         private String query; // e.g. "I need a laptop for coding under ₹70,000"
         private Double maxBudget;
         private Long categoryId;
@@ -45,6 +47,7 @@ public class AiDTOs {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SellerAiQueryRequest {
+        @JsonAlias({"userQuery", "prompt"})
         private String query; // e.g. "Which products will stock out next week?"
     }
 

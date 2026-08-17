@@ -21,7 +21,7 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    @GetMapping("/briefing")
+    @GetMapping({"/briefing", "/executive-briefing"})
     @Operation(summary = "Morning Executive Briefing", description = "Morning overview of critical issues (stockouts, dead stock, risk review), opportunities, and financials")
     public ResponseEntity<ExecutiveBriefingDTO> getExecutiveBriefing() {
         return ResponseEntity.ok(analyticsService.getExecutiveBriefing());
@@ -39,7 +39,7 @@ public class AnalyticsController {
         return ResponseEntity.ok(analyticsService.getWhyRevenueChanged());
     }
 
-    @GetMapping("/sales-chart")
+    @GetMapping({"/sales-chart", "/sales-trend"})
     @Operation(summary = "Sales & Profit Trend Chart", description = "Historical daily sales, revenue, profit, and order volume data for Recharts")
     public ResponseEntity<List<ChartDataPoint>> getSalesChart(
             @RequestParam(defaultValue = "14") int days) {

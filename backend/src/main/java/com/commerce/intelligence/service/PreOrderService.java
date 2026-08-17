@@ -78,6 +78,24 @@ public class PreOrderService {
     }
 
     @Transactional(readOnly = true)
+    public List<PreOrderDemandSummaryDTO> getAllPreOrderDemandSummaries() {
+        List<Product> preOrderProducts = productRepository.findAll().stream()
+                .filter(p -> Boolean.TRUE.equals(p.getPreOrderEnabled()) || (p.getPreOrderCount() != null && p.getPreOrderCount() > 0))
+                .collect(Collectors.toList());
+
+        return preOrderProducts.stream()
+                .map(p -> getPreOrderDemandSummary(p.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PreOrderResponse> getAllPendingPreOrders() {
+        return preOrderRepository.findAll().stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public PreOrderDemandSummaryDTO getPreOrderDemandSummary(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));

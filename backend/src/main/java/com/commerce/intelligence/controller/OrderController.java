@@ -44,9 +44,23 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
+    @GetMapping("/manage")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORDER_MANAGER')")
+    @Operation(summary = "All Orders List", description = "List of all orders for operations management")
+    public ResponseEntity<List<OrderResponse>> getAllOrdersList() {
+        return ResponseEntity.ok(orderService.getAllOrdersList());
+    }
+
+    @GetMapping("/manage/high-risk")
+    @PreAuthorize("hasAnyRole('ADMIN', 'ORDER_MANAGER')")
+    @Operation(summary = "High Risk Orders Queue", description = "List of orders flagged by the fraud risk engine requiring manual review")
+    public ResponseEntity<List<OrderResponse>> getHighRiskOrders() {
+        return ResponseEntity.ok(orderService.getHighRiskOrders());
+    }
+
     @GetMapping("/manage/all")
     @PreAuthorize("hasAnyRole('ADMIN', 'ORDER_MANAGER')")
-    @Operation(summary = "All Orders (Admin / Order Manager)", description = "Paginated list of all orders across the platform with risk indicators")
+    @Operation(summary = "All Orders Paginated (Admin / Order Manager)", description = "Paginated list of all orders across the platform with risk indicators")
     public ResponseEntity<Page<OrderResponse>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "15") int size,

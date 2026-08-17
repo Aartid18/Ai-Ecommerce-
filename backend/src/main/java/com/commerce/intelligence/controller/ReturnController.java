@@ -35,14 +35,14 @@ public class ReturnController {
         return ResponseEntity.ok(returnService.getCustomerReturnRequests(userId));
     }
 
-    @GetMapping("/all")
+    @GetMapping({"/all", "/manage"})
     @PreAuthorize("hasAnyRole('ADMIN', 'ORDER_MANAGER')")
     @Operation(summary = "Get All Return Requests (Admin / Order Manager)", description = "Lists all return requests across customers")
     public ResponseEntity<List<ReturnResponse>> getAllReturns() {
         return ResponseEntity.ok(returnService.getAllReturnRequests());
     }
 
-    @PutMapping("/{id}/decision")
+    @PutMapping({"/{id}/decision", "/manage/{id}/decision"})
     @PreAuthorize("hasAnyRole('ADMIN', 'ORDER_MANAGER')")
     @Operation(summary = "Process Return Decision", description = "Approves, rejects, or refunds a return request with notes")
     public ResponseEntity<ReturnResponse> processReturnDecision(

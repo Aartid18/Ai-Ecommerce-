@@ -277,6 +277,21 @@ public class OrderService {
     }
 
     @Transactional(readOnly = true)
+    public List<OrderResponse> getAllOrdersList() {
+        return orderRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(this::mapToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getHighRiskOrders() {
+        return orderRepository.findAllByOrderByCreatedAtDesc().stream()
+                .filter(o -> o.getRiskLevel() == RiskLevel.HIGH || o.getRiskLevel() == RiskLevel.CRITICAL || (o.getRiskScore() != null && o.getRiskScore() >= 70))
+                .map(this::mapToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public List<OrderResponse> getCustomerOrders(Long userId) {
         return orderRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(this::mapToOrderResponse)

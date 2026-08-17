@@ -22,6 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByRiskLevel(RiskLevel riskLevel);
 
     Page<Order> findAllByOrderByCreatedAtDesc(Pageable pageable);
+    List<Order> findAllByOrderByCreatedAtDesc();
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")
     Long countByUserId(@Param("userId") Long userId);

@@ -19,14 +19,14 @@ public class AiController {
     private final CustomerAiService customerAiService;
     private final SellerAiService sellerAiService;
 
-    @PostMapping("/customer/recommend")
+    @PostMapping({"/customer/recommend", "/customer-assistant"})
     @Operation(summary = "Customer AI Shopping Copilot", description = "Grounded shopping assistant evaluating budget, real specs (RAM, CPU, SSD), ratings, and trade-offs")
     public ResponseEntity<CustomerAiRecommendationResponse> getCustomerRecommendations(
             @RequestBody CustomerAiQueryRequest request) {
         return ResponseEntity.ok(customerAiService.getShoppingRecommendations(request));
     }
 
-    @PostMapping("/seller/analyze")
+    @PostMapping({"/seller/analyze", "/seller-assistant"})
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_MANAGER', 'ORDER_MANAGER')")
     @Operation(summary = "Seller AI Copilot", description = "Answers operational questions (e.g. stockouts, dead stock, discounting) using actual platform metrics, forecasts, and executable actions")
     public ResponseEntity<SellerAiAnalysisResponse> analyzeSellerQuery(

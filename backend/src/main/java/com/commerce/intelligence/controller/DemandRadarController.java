@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/demand")
+@RequestMapping({"/api/demand", "/api/demand-radar"})
 @RequiredArgsConstructor
 @Tag(name = "Demand Radar & Smart Deals", description = "Signature Feature #1: Anonymized behavioral demand aggregation and explainable smart pricing engine")
 public class DemandRadarController {
@@ -23,7 +23,7 @@ public class DemandRadarController {
     private final DemandRadarService demandRadarService;
     private final SmartDealEngineService smartDealEngineService;
 
-    @GetMapping("/radar")
+    @GetMapping({"/radar", "/signals"})
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_MANAGER')")
     @Operation(summary = "Demand Radar Opportunities", description = "Aggregates search growth, wishlist volume, price-watch bands, and cart conversions into actionable demand signals")
     public ResponseEntity<List<DemandSignalDTO>> getDemandRadar() {
@@ -37,11 +37,20 @@ public class DemandRadarController {
         return ResponseEntity.ok(smartDealEngineService.getSmartDealRecommendations());
     }
 
-    @PostMapping("/apply-promotion")
+    @PostMapping({"/apply-promotion", "/apply-deal"})
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_MANAGER')")
     @Operation(summary = "Apply Smart Deal Promotion", description = "Seller-approved 1-click promotion execution that updates price and broadcasts price-drop alerts to watchers")
-    public ResponseEntity<Product> applyPromotion(@RequestBody ApplyPromotionRequest request) {
+    public ResponseEntity<Product> applyPromotion(
+            @RequestBody(required = false) ApplyPromotionRequest request,
+            @RequestParam(required = false) Long productId,
+            @RequestParam(required = false) Double discountPercentage) {
         String actor = SecurityUtils.getCurrentUsername();
+        if (request == null) {
+            request = new ApplyPromotionRequest(productId, null, discountPercentage, "Smart Deal Promotion");
+        } else {
+            if (productId != null) request.setProductId(productId);
+            if (discountPercentage != null) request.setDiscountPercentage(discountPercentage);
+        }
         return ResponseEntity.ok(demandRadarService.applySmartDealPromotion(request, actor));
     }
 }

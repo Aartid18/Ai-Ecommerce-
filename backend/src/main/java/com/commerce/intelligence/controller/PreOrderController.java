@@ -36,11 +36,25 @@ public class PreOrderController {
         return ResponseEntity.ok(preOrderService.getCustomerPreOrders(userId));
     }
 
+    @GetMapping("/demand-summary")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_MANAGER')")
+    @Operation(summary = "Pre-Order Demand Summaries", description = "Calculates pre-order demand across all items supporting pre-orders")
+    public ResponseEntity<List<PreOrderDemandSummaryDTO>> getAllPreOrderDemandSummaries() {
+        return ResponseEntity.ok(preOrderService.getAllPreOrderDemandSummaries());
+    }
+
     @GetMapping("/demand-summary/{productId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_MANAGER')")
     @Operation(summary = "Pre-Order Demand Intelligence", description = "Calculates pre-order demand volume, expected revenue, safety stock, and recommended supplier purchase quantity")
     public ResponseEntity<PreOrderDemandSummaryDTO> getPreOrderDemandSummary(@PathVariable Long productId) {
         return ResponseEntity.ok(preOrderService.getPreOrderDemandSummary(productId));
+    }
+
+    @GetMapping("/all-pending")
+    @PreAuthorize("hasAnyRole('ADMIN', 'INVENTORY_MANAGER')")
+    @Operation(summary = "All Pre-Orders Registry", description = "Lists all customer pre-orders across the platform")
+    public ResponseEntity<List<PreOrderResponse>> getAllPendingPreOrders() {
+        return ResponseEntity.ok(preOrderService.getAllPendingPreOrders());
     }
 
     @PostMapping("/fulfill/{productId}")

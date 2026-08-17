@@ -98,23 +98,44 @@ export const App: React.FC = () => {
                 <Route path="/customer/cart" element={<CartPage />} />
                 <Route path="/customer/checkout" element={<CheckoutPage />} />
                 <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                <Route path="/customer/orders" element={<CustomerDashboard />} />
+                <Route path="/customer/wishlist" element={<CustomerDashboard />} />
+                <Route path="/customer/preorders" element={<CustomerDashboard />} />
+                <Route path="/customer/price-watches" element={<CustomerDashboard />} />
+                <Route path="/customer/profile" element={<CustomerDashboard />} />
                 <Route path="/customer/ai-assistant" element={<CustomerAiCopilot />} />
               </Route>
 
               {/* Admin & Operations Routes */}
               <Route element={<AdminLayout />}>
                 <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                <Route path="/admin/analytics" element={<AdminDashboard />} />
                 <Route path="/admin/demand-radar" element={<DemandRadarPage />} />
                 <Route path="/admin/ai-copilot" element={<SellerAiCopilot />} />
                 <Route path="/admin/inventory" element={<InventoryOperationsPage />} />
+                <Route path="/admin/products" element={<InventoryOperationsPage />} />
+                <Route path="/admin/categories" element={<InventoryOperationsPage />} />
+                <Route path="/admin/brands" element={<InventoryOperationsPage />} />
                 <Route path="/admin/preorders" element={<SmartPreOrdersPage />} />
                 <Route path="/admin/orders" element={<OrderRiskManagementPage />} />
+                <Route path="/admin/risk" element={<OrderRiskManagementPage />} />
                 <Route path="/admin/returns" element={<ReturnsManagementPage />} />
+                <Route path="/admin/coupons" element={<CouponsAndAuditPage />} />
+                <Route path="/admin/users" element={<CouponsAndAuditPage />} />
                 <Route path="/admin/audit-logs" element={<CouponsAndAuditPage />} />
 
                 {/* Direct Manager Shortcuts */}
                 <Route path="/inventory/dashboard" element={<InventoryOperationsPage />} />
+                <Route path="/inventory/products" element={<InventoryOperationsPage />} />
+                <Route path="/inventory/forecast" element={<InventoryOperationsPage />} />
+                <Route path="/inventory/dead-stock" element={<InventoryOperationsPage />} />
+                <Route path="/inventory/reorders" element={<InventoryOperationsPage />} />
+                <Route path="/inventory/suppliers" element={<InventoryOperationsPage />} />
+
                 <Route path="/orders/dashboard" element={<OrderRiskManagementPage />} />
+                <Route path="/orders/manage" element={<OrderRiskManagementPage />} />
+                <Route path="/orders/risk" element={<OrderRiskManagementPage />} />
+                <Route path="/orders/returns" element={<ReturnsManagementPage />} />
               </Route>
 
               {/* Catch-all fallback */}
