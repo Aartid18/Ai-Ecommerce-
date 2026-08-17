@@ -107,34 +107,62 @@ export const getMockResponse = (url: string, method: string = 'get', data?: any)
   if (cleanUrl.includes('/events/notifications') || cleanUrl.includes('/notifications/my') || cleanUrl.includes('/notifications')) {
     return [];
   }
-  if (cleanUrl.includes('/ai/customer/recommendations')) {
+  if (cleanUrl.includes('/ai/customer-assistant') || cleanUrl.includes('/ai/customer/recommendations')) {
     return {
-      replyText: "Based on your requirements, here are our top AI-matched products with grounded spec trade-offs:",
+      querySummary: "Developer Performance Matching",
       recommendations: [
         {
           productId: 1,
           productName: "Lenovo ThinkPad X1 Carbon Gen 11",
           price: 157249.0,
-          whyRecommended: ["Ultra-portable 1.12kg body with military-grade durability", "32GB LPDDR5 RAM for heavy multitasking and compilation"],
-          tradeOff: "Premium price tier, but unmatched keyboard and Linux/Docker performance.",
-          keySpecs: ["Intel Core i7-1365U", "32GB RAM", "1TB Gen4 SSD", "2.8K OLED Display"],
+          mainImageUrl: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80",
           rating: 4.8,
-          inStock: true
+          matchBadge: "BEST DEVELOPER MATCH",
+          whyRecommended: [
+            "Ultra-portable 1.12kg chassis with military-grade durability",
+            "32GB LPDDR5 6400MHz RAM for Docker containers & code compilation",
+            "2.8K OLED display with 100% DCI-P3 color calibration"
+          ],
+          tradeOff: "Premium price tier, but unmatched keyboard travel and Linux/WSL compatibility.",
+          keySpecs: ["Intel Core i7-1365U", "32GB RAM", "1TB Gen4 SSD", "2.8K OLED Display"]
         }
-      ]
+      ],
+      aiExplanation: "Directly matched against our active warehouse inventory. ThinkPad X1 Carbon is in stock with 14 units remaining."
     };
   }
-  if (cleanUrl.includes('/ai/seller/analyze')) {
+  if (cleanUrl.includes('/ai/seller-assistant') || cleanUrl.includes('/ai/seller/analyze')) {
     return {
-      query: data?.query || "Operations Analysis",
-      summary: "Inventory and sales telemetry indicate positive velocity with 2 critical stockout risks within 5 days.",
+      userQuery: data?.userQuery || "Operations Analysis",
+      summaryHeading: "Inventory & Demand Velocity Telemetry",
       actualDataPoints: [
-        "Dell 7-in-1 Hub has 6 units remaining (Velocity: 2.1 units/day).",
+        "Dell 7-in-1 Hub has 6 units remaining (Sales Velocity: 2.1 units/day).",
         "Keychron Q1 Pro is at 0 units with 8 customer pre-orders waiting."
       ],
+      calculatedMetrics: [
+        "Dell Hub estimated stockout: 3 days",
+        "Pre-order committed revenue: ₹1,51,992"
+      ],
+      forecasts: [
+        "Reordering 25 units of Dell Hub will protect ₹1.75L in gross revenue.",
+        "Expediting Keychron Q1 Pro PO will fulfill 8 pending pre-orders within 10 days."
+      ],
       actionRecommendations: [
-        "Issue PO for 25 units of Dell Hub to avoid stockout in 3 days.",
-        "Expedite supplier delivery for 32 units of Keychron Q1 Pro."
+        {
+          productId: 5,
+          productName: "Dell 7-in-1 Dual 4K USB-C Multiport Adapter",
+          issueCategory: "CRITICAL_STOCKOUT",
+          recommendationText: "Issue Purchase Order for 25 units to avoid stockout in 3 days.",
+          potentialImpact: "HIGH",
+          actionButtonText: "Issue Purchase Order"
+        },
+        {
+          productId: 4,
+          productName: "Keychron Q1 Pro Wireless Custom Mechanical Keyboard",
+          issueCategory: "PRE_ORDER_FULFILLMENT",
+          recommendationText: "Allocate 32 units from supplier shipment to fulfill pre-orders.",
+          potentialImpact: "HIGH",
+          actionButtonText: "Expedite Supplier Batch"
+        }
       ]
     };
   }
