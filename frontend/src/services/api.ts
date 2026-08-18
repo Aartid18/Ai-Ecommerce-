@@ -56,8 +56,8 @@ api.interceptors.response.use(
       }
     }
 
-    // Fallback to mock data if network error or 404
-    if (originalRequest && (!error.response || error.response.status === 404 || error.response.status >= 500)) {
+    // Fallback to mock data if network error, 404, 405, or 500
+    if (originalRequest && (!error.response || error.response.status === 404 || error.response.status === 405 || error.response.status >= 500)) {
       const mockData = getMockResponse(originalRequest.url || '', originalRequest.method || 'get', originalRequest.data);
       return Promise.resolve({
         data: mockData,

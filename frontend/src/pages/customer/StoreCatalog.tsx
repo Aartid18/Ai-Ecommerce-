@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import api from '../../services/api';
 import { Product, Category, Brand } from '../../types';
 import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
 import { ProductCard3D } from '../../components/customer/ProductCard3D';
+import { QuickViewModal } from '../../components/customer/QuickViewModal';
+import { BundleBuilderSection } from '../../components/customer/BundleBuilderSection';
+import { RecentlyViewedSection } from '../../components/customer/RecentlyViewedSection';
+import { CustomerReviewsSection } from '../../components/customer/CustomerReviewsSection';
+import { NewsletterSection } from '../../components/customer/NewsletterSection';
 import {
   Search,
   SlidersHorizontal,
@@ -21,6 +26,9 @@ import {
   ArrowRight,
   ShieldCheck,
   Zap,
+  Flame,
+  CheckCircle,
+  Filter,
 } from 'lucide-react';
 
 export const StoreCatalog: React.FC = () => {
@@ -35,6 +43,9 @@ export const StoreCatalog: React.FC = () => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [totalElements, setTotalElements] = useState<number>(0);
 
+  // Quick View Modal
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
   // Price Watch & Pre-Order Modal States
   const [priceWatchProduct, setPriceWatchProduct] = useState<Product | null>(null);
   const [targetPriceInput, setTargetPriceInput] = useState<string>('');
@@ -42,6 +53,9 @@ export const StoreCatalog: React.FC = () => {
 
   const [preOrderProduct, setPreOrderProduct] = useState<Product | null>(null);
   const [preOrderLoading, setPreOrderLoading] = useState<boolean>(false);
+
+  // Mobile Filter Drawer Toggle
+  const [mobileFilterOpen, setMobileFilterOpen] = useState<boolean>(false);
 
   // Filter Collapse Toggles
   const [catOpen, setCatOpen] = useState<boolean>(true);
@@ -56,6 +70,9 @@ export const StoreCatalog: React.FC = () => {
   const maxPrice = searchParams.get('maxPrice') || '';
   const sort = searchParams.get('sort') || 'demandScore,desc';
   const page = parseInt(searchParams.get('page') || '0', 10);
+
+  const catalogRef = useRef<HTMLDivElement>(null);
+  const trendingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMetadata();
@@ -128,6 +145,16 @@ export const StoreCatalog: React.FC = () => {
     setSearchParams(new URLSearchParams());
   };
 
+  const scrollToCatalog = () => {
+    catalogRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleTrendingScroll = (direction: 'left' | 'right') => {
+    if (!trendingRef.current) return;
+    const offset = direction === 'left' ? -340 : 340;
+    trendingRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+  };
+
   const handleCreatePriceWatch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!priceWatchProduct) return;
@@ -165,47 +192,49 @@ export const StoreCatalog: React.FC = () => {
   };
 
   const nlpPills = [
-    'Laptop for coding',
+    'Lenovo ThinkPad OLED',
     'Noise-cancelling headphones',
     'Mechanical keyboards',
-    'Fast USB-C adapters',
+    'USB-C 4K Docks',
+    'Apple Watch Titanium',
   ];
 
   const selectedCategoryName = categories.find((c) => c.id.toString() === categoryId)?.name;
   const selectedBrandName = brands.find((b) => b.id.toString() === brandId)?.name;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-12">
-      {/* 1. EDITORIAL HERO SECTION */}
-      <section className="relative rounded-[36px] bg-[#EBE4D8] border border-black/[0.06] overflow-hidden p-8 sm:p-12 shadow-prem-sm">
-        {/* Curved Warm Background Radial Layer */}
-        <div className="absolute top-0 right-0 w-[550px] h-[550px] rounded-full bg-brand-crimson/[0.04] blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[450px] h-[450px] rounded-full bg-brand-gold/[0.05] blur-3xl pointer-events-none" />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-16">
+      {/* 1. IMMERSIVE HERO SECTION */}
+      <section className="relative rounded-[40px] bg-[#EFE9DE] border border-black/[0.07] overflow-hidden p-8 sm:p-14 shadow-prem-md">
+        {/* Soft Ambient Floating Light Orbs */}
+        <div className="absolute top-0 right-0 w-[550px] h-[550px] rounded-full bg-brand-crimson/[0.07] blur-[90px] pointer-events-none animate-pulse-glow" />
+        <div className="absolute bottom-0 left-0 w-[450px] h-[450px] rounded-full bg-brand-gold/[0.08] blur-[80px] pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-          {/* LEFT: Headline & Search */}
+          {/* LEFT: Bold Typography & Search Discovery */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/80 border border-black/[0.08] text-txt-primary text-xs font-semibold tracking-wide shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-brand-crimson" />
-              <span className="uppercase text-[10px] tracking-wider font-bold">AI COMMERCE INTELLIGENCE</span>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/90 border border-black/[0.08] text-txt-primary text-xs font-semibold tracking-wide shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-brand-crimson animate-pulse" />
+              <span className="uppercase text-[10px] tracking-wider font-bold">NEXT-GENERATION HARDWARE STOREFRONT</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-normal font-serif text-txt-primary leading-[1.08] tracking-tight">
-              Discover products with a smarter{' '}
-              <span className="text-brand-crimson italic">point of view.</span>
+              Hardware designed to inspire,{' '}
+              <span className="text-brand-crimson italic">built to endure.</span>
             </h1>
 
             <p className="text-sm sm:text-base text-txt-secondary leading-relaxed max-w-lg">
-              Explore products, track prices, understand demand and make better purchase decisions.
+              Explore curated premium hardware backed by real-time demand radar telemetry, verified stock allocation, and intelligent price-drop tracking.
             </p>
 
-            {/* Search Input Bar */}
+            {/* Instant Search Bar */}
             <form
               onSubmit={(e) => {
                 e.preventDefault();
+                scrollToCatalog();
                 fetchProducts();
               }}
-              className="relative flex items-center max-w-xl"
+              className="relative flex items-center max-w-xl shadow-sm"
             >
               <div className="absolute left-4 pointer-events-none text-txt-muted">
                 <Search className="w-4 h-4 text-brand-crimson" />
@@ -214,14 +243,14 @@ export const StoreCatalog: React.FC = () => {
                 type="text"
                 value={search}
                 onChange={(e) => updateFilter('search', e.target.value)}
-                placeholder="Search products, ask for recommendations, or describe what you need..."
-                className="w-full bg-white border border-black/[0.12] hover:border-brand-crimson/50 focus:border-brand-crimson rounded-full pl-11 pr-28 py-3.5 text-xs sm:text-sm text-txt-primary placeholder:text-txt-muted shadow-sm focus:outline-none transition-all"
+                placeholder="Search premium laptops, studio audio, keyboards..."
+                className="w-full bg-white border border-black/[0.12] hover:border-brand-crimson/50 focus:border-brand-crimson rounded-full pl-11 pr-28 py-3.5 text-xs sm:text-sm text-txt-primary placeholder:text-txt-muted focus:outline-none transition-all shadow-sm"
               />
               <button
                 type="submit"
-                className="absolute right-1.5 px-5 py-2.5 rounded-full bg-brand-crimson text-white font-semibold text-xs hover:bg-brand-crimsonHover transition-colors shadow-sm"
+                className="absolute right-1.5 px-5 py-2.5 rounded-full bg-brand-crimson text-white font-semibold text-xs hover:bg-brand-crimsonHover transition-all shadow-sm"
               >
-                Search
+                Explore
               </button>
             </form>
 
@@ -229,32 +258,56 @@ export const StoreCatalog: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2 pt-1">
               <span className="text-[11px] text-txt-muted font-medium flex items-center gap-1">
                 <Sparkles className="w-3 h-3 text-brand-crimson" />
-                <span>Popular:</span>
+                <span>Trending Searches:</span>
               </span>
               {nlpPills.map((pill, idx) => (
                 <button
                   key={idx}
-                  onClick={() => updateFilter('search', pill)}
-                  className="text-xs px-3 py-1 rounded-full bg-white/70 hover:bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary transition-all font-medium shadow-sm"
+                  onClick={() => {
+                    updateFilter('search', pill);
+                    scrollToCatalog();
+                  }}
+                  className="text-xs px-3 py-1 rounded-full bg-white/80 hover:bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary transition-all font-medium shadow-sm"
                 >
                   {pill}
                 </button>
               ))}
             </div>
+
+            {/* Primary & Secondary Action CTAs */}
+            <div className="flex items-center gap-3 pt-2">
+              <button
+                onClick={scrollToCatalog}
+                className="prem-btn-primary text-xs py-3 px-6 shadow-md"
+              >
+                <span>Shop All Hardware</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+              <Link
+                to="/customer/ai-assistant"
+                className="prem-btn-secondary text-xs py-3 px-5"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-brand-crimson" />
+                <span>Ask AI Copilot</span>
+              </Link>
+            </div>
           </div>
 
-          {/* RIGHT: Editorial Asymmetrical 3D Product Cluster */}
+          {/* RIGHT: Floating Interactive 3D Product Stage */}
           <div className="lg:col-span-5 relative flex items-center justify-center">
-            {/* Primary Elevated Showcase Circle */}
-            <div className="relative w-72 sm:w-80 h-72 sm:h-80 rounded-full bg-white border border-black/[0.06] shadow-prem-lg flex items-center justify-center p-6">
+            {/* Primary Showcase Orb */}
+            <div className="relative w-72 sm:w-84 h-72 sm:h-84 rounded-full bg-white border border-black/[0.08] shadow-prem-lg flex items-center justify-center p-8">
               <img
                 src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80"
                 alt="Bose Headphones"
-                className="w-full h-full object-contain mix-blend-multiply hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-contain mix-blend-multiply hover:scale-108 transition-transform duration-500"
               />
 
-              {/* Floating Mini Product 1: Apple Watch Ultra (Top Left) */}
-              <div className="absolute -top-4 -left-6 p-2.5 rounded-2xl bg-white border border-black/[0.08] shadow-prem-md flex items-center gap-2.5 animate-float-1">
+              {/* Floating Mini Product 1: Apple Watch (Top Left) */}
+              <Link
+                to="/customer/product/2"
+                className="absolute -top-3 -left-6 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-prem-md flex items-center gap-3 animate-float-1 hover:scale-105 transition-all"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=80"
                   alt="Apple Watch"
@@ -262,34 +315,47 @@ export const StoreCatalog: React.FC = () => {
                 />
                 <div className="text-left pr-1">
                   <div className="text-[11px] font-bold text-txt-primary">Apple Watch Ultra 2</div>
-                  <div className="text-[10px] text-[#3A835C] font-semibold">● High Demand</div>
+                  <div className="text-[10px] text-[#2A7B4C] font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2A7B4C] animate-pulse" /> High Demand
+                  </div>
                 </div>
-              </div>
+              </Link>
 
               {/* Floating Mini Product 2: ThinkPad X1 (Bottom Right) */}
-              <div className="absolute -bottom-4 -right-4 p-2.5 rounded-2xl bg-white border border-black/[0.08] shadow-prem-md flex items-center gap-2.5 animate-float-2">
+              <Link
+                to="/customer/product/1"
+                className="absolute -bottom-4 -right-4 p-3 rounded-2xl bg-white border border-black/[0.08] shadow-prem-md flex items-center gap-3 animate-float-2 hover:scale-105 transition-all"
+              >
                 <img
                   src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80"
                   alt="ThinkPad X1"
                   className="w-10 h-10 object-contain mix-blend-multiply rounded-lg"
                 />
                 <div className="text-left pr-1">
-                  <div className="text-[11px] font-bold text-txt-primary">ThinkPad X1 Carbon</div>
-                  <div className="text-[10px] text-brand-crimson font-bold">15% Discount</div>
+                  <div className="text-[11px] font-bold text-txt-primary">ThinkPad X1 OLED</div>
+                  <div className="text-[10px] text-brand-crimson font-bold">15% Limited Discount</div>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 2. EDITORIAL CATEGORY CAPSULES */}
+      {/* 2. CURATED CATEGORY SHOWCASE */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl sm:text-2xl font-serif text-txt-primary">
-            Curated Categories
-          </h2>
-          <span className="text-xs text-txt-muted font-medium">Explore 5 hardware collections</span>
+          <div>
+            <h2 className="text-xl sm:text-2xl font-serif text-txt-primary">
+              Curated Hardware Collections
+            </h2>
+            <p className="text-xs text-txt-muted mt-0.5">Explore tailored gear by category</p>
+          </div>
+          <button
+            onClick={() => updateFilter('categoryId', '')}
+            className="text-xs text-brand-crimson hover:underline font-semibold"
+          >
+            Show All Categories
+          </button>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
@@ -298,11 +364,14 @@ export const StoreCatalog: React.FC = () => {
             return (
               <button
                 key={c.id}
-                onClick={() => updateFilter('categoryId', isSelected ? '' : c.id.toString())}
-                className={`p-4 rounded-2xl text-left transition-all duration-200 border ${
+                onClick={() => {
+                  updateFilter('categoryId', isSelected ? '' : c.id.toString());
+                  scrollToCatalog();
+                }}
+                className={`p-4 sm:p-5 rounded-3xl text-left transition-all duration-200 border ${
                   isSelected
-                    ? 'bg-brand-crimson text-white border-brand-crimson shadow-prem-md'
-                    : 'bg-white hover:bg-[#FDFBF7] text-txt-primary border-black/[0.06] shadow-prem-sm hover:-translate-y-1'
+                    ? 'bg-brand-crimson text-white border-brand-crimson shadow-prem-md -translate-y-1'
+                    : 'bg-white hover:bg-[#FDFBF7] text-txt-primary border-black/[0.07] shadow-prem-sm hover:-translate-y-1'
                 }`}
               >
                 <div className="text-xs font-bold truncate mb-1">{c.name}</div>
@@ -315,312 +384,9 @@ export const StoreCatalog: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. ACTIVE FILTERS STRIP */}
-      {(categoryId || brandId || search || minPrice || maxPrice) && (
-        <div className="flex flex-wrap items-center gap-2 p-3 rounded-2xl bg-white border border-black/[0.06] shadow-prem-sm">
-          <span className="text-xs text-txt-muted font-medium">Active Filters:</span>
-          {selectedCategoryName && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F0E8] border border-black/[0.08] text-xs text-txt-primary">
-              Category: <strong className="text-brand-crimson">{selectedCategoryName}</strong>
-              <button onClick={() => removeFilter('categoryId')} className="hover:text-brand-crimson ml-1">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-          {selectedBrandName && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F0E8] border border-black/[0.08] text-xs text-txt-primary">
-              Brand: <strong className="text-brand-crimson">{selectedBrandName}</strong>
-              <button onClick={() => removeFilter('brandId')} className="hover:text-brand-crimson ml-1">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-          {search && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F0E8] border border-black/[0.08] text-xs text-txt-primary">
-              Query: <strong className="text-brand-crimson">"{search}"</strong>
-              <button onClick={() => removeFilter('search')} className="hover:text-brand-crimson ml-1">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-          {(minPrice || maxPrice) && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4F0E8] border border-black/[0.08] text-xs text-txt-primary">
-              Price: ₹{minPrice || 0} - ₹{maxPrice || '∞'}
-              <button onClick={() => { removeFilter('minPrice'); removeFilter('maxPrice'); }} className="hover:text-brand-crimson ml-1">
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          )}
-          <button
-            onClick={clearFilters}
-            className="text-xs text-brand-crimson hover:underline ml-auto flex items-center gap-1 font-semibold"
-          >
-            <RotateCcw className="w-3 h-3" /> Reset All
-          </button>
-        </div>
-      )}
-
-      {/* 4. PRODUCT DISCOVERY: Filter Sidebar + 3D Product Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-        {/* SIDEBAR FILTERS (Clean White Surface) */}
-        <aside className="lg:col-span-1 space-y-4">
-          <div className="prem-card p-5 space-y-5 sticky top-20 bg-white border border-black/[0.08] rounded-[24px]">
-            <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
-              <span className="text-xs font-bold text-txt-primary uppercase tracking-wider flex items-center gap-2">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-brand-crimson" />
-                Refine Selection
-              </span>
-              <span className="text-[11px] text-txt-muted">{totalElements} items</span>
-            </div>
-
-            {/* Category Accordion */}
-            <div className="space-y-2">
-              <button
-                onClick={() => setCatOpen(!catOpen)}
-                className="w-full flex items-center justify-between text-xs font-bold text-txt-secondary hover:text-txt-primary uppercase tracking-wider"
-              >
-                <span>Category</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {catOpen && (
-                <div className="space-y-1 max-h-48 overflow-y-auto pr-1 pt-1">
-                  <button
-                    onClick={() => updateFilter('categoryId', '')}
-                    className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors flex items-center justify-between ${
-                      !categoryId
-                        ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
-                        : 'text-txt-secondary hover:text-txt-primary hover:bg-[#F7F4EE]'
-                    }`}
-                  >
-                    <span>All Categories</span>
-                    <span className="text-[10px] text-txt-muted">{products.length}</span>
-                  </button>
-                  {categories.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => updateFilter('categoryId', c.id.toString())}
-                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors flex items-center justify-between truncate ${
-                        categoryId === c.id.toString()
-                          ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
-                          : 'text-txt-secondary hover:text-txt-primary hover:bg-[#F7F4EE]'
-                      }`}
-                    >
-                      <span className="truncate">{c.name}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Brand Accordion */}
-            <div className="space-y-2 pt-2 border-t border-black/[0.06]">
-              <button
-                onClick={() => setBrandOpen(!brandOpen)}
-                className="w-full flex items-center justify-between text-xs font-bold text-txt-secondary hover:text-txt-primary uppercase tracking-wider"
-              >
-                <span>Brand</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${brandOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {brandOpen && (
-                <div className="space-y-1 max-h-40 overflow-y-auto pr-1 pt-1">
-                  <button
-                    onClick={() => updateFilter('brandId', '')}
-                    className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors ${
-                      !brandId
-                        ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
-                        : 'text-txt-secondary hover:text-txt-primary hover:bg-[#F7F4EE]'
-                    }`}
-                  >
-                    All Brands
-                  </button>
-                  {brands.map((b) => (
-                    <button
-                      key={b.id}
-                      onClick={() => updateFilter('brandId', b.id.toString())}
-                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors ${
-                        brandId === b.id.toString()
-                          ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
-                          : 'text-txt-secondary hover:text-txt-primary hover:bg-[#F7F4EE]'
-                      }`}
-                    >
-                      {b.name}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Price Range Filter */}
-            <div className="space-y-2 pt-2 border-t border-black/[0.06]">
-              <button
-                onClick={() => setPriceOpen(!priceOpen)}
-                className="w-full flex items-center justify-between text-xs font-bold text-txt-secondary hover:text-txt-primary uppercase tracking-wider"
-              >
-                <span>Price Range (₹)</span>
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${priceOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {priceOpen && (
-                <div className="space-y-2 pt-1">
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="number"
-                      value={minPrice}
-                      onChange={(e) => updateFilter('minPrice', e.target.value)}
-                      placeholder="Min"
-                      className="prem-input text-xs w-full py-1.5"
-                    />
-                    <input
-                      type="number"
-                      value={maxPrice}
-                      onChange={(e) => updateFilter('maxPrice', e.target.value)}
-                      placeholder="Max"
-                      className="prem-input text-xs w-full py-1.5"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Quick Sort Links */}
-            <div className="pt-2 border-t border-black/[0.06] space-y-2">
-              <span className="text-[11px] font-bold text-txt-muted uppercase tracking-wider">Quick Sort</span>
-              <div className="grid grid-cols-2 gap-1.5">
-                <button
-                  onClick={() => updateFilter('sort', 'demandScore,desc')}
-                  className={`px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border text-center transition-all ${
-                    sort.includes('demandScore')
-                      ? 'bg-brand-crimson text-white border-brand-crimson'
-                      : 'bg-[#F4F0E8] border-black/[0.06] text-txt-secondary hover:text-txt-primary'
-                  }`}
-                >
-                  🔥 High Demand
-                </button>
-                <button
-                  onClick={() => updateFilter('sort', 'price,asc')}
-                  className={`px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border text-center transition-all ${
-                    sort === 'price,asc'
-                      ? 'bg-brand-crimson text-white border-brand-crimson'
-                      : 'bg-[#F4F0E8] border-black/[0.06] text-txt-secondary hover:text-txt-primary'
-                  }`}
-                >
-                  💰 Best Price
-                </button>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* PRODUCTS GRID */}
-        <main className="lg:col-span-3 space-y-6">
-          {/* Controls Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
-            <div className="text-xs text-txt-secondary">
-              Showing <strong className="text-txt-primary">{products.length}</strong> of {totalElements} verified products
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-txt-muted font-medium">Sort by:</span>
-              <select
-                value={sort}
-                onChange={(e) => updateFilter('sort', e.target.value)}
-                className="prem-input text-xs py-1.5 px-3 rounded-full cursor-pointer bg-white"
-              >
-                <option value="demandScore,desc">Demand Intelligence Score</option>
-                <option value="price,asc">Price: Low to High</option>
-                <option value="price,desc">Price: High to Low</option>
-                <option value="rating,desc">Customer Rating</option>
-                <option value="salesVelocity,desc">Sales Velocity</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Product Cards Grid with 3D Interaction */}
-          {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="prem-card p-5 space-y-4 animate-pulse bg-white">
-                  <div className="w-full h-56 bg-[#F0EAE0] rounded-2xl" />
-                  <div className="h-4 bg-[#F0EAE0] rounded w-3/4" />
-                  <div className="h-3 bg-[#F0EAE0] rounded w-1/2" />
-                  <div className="h-6 bg-[#F0EAE0] rounded w-1/3" />
-                  <div className="h-10 bg-[#F0EAE0] rounded-full" />
-                </div>
-              ))}
-            </div>
-          ) : products.length === 0 ? (
-            <div className="prem-card p-12 text-center space-y-4 max-w-lg mx-auto bg-white">
-              <div className="w-14 h-14 rounded-full bg-brand-crimson/10 flex items-center justify-center mx-auto text-brand-crimson">
-                <Search className="w-6 h-6" />
-              </div>
-              <h3 className="text-lg font-serif text-txt-primary">Nothing matched those filters</h3>
-              <p className="text-xs text-txt-secondary">
-                Try clearing your search filters or explore our trending technical categories.
-              </p>
-              <button
-                onClick={clearFilters}
-                className="prem-btn-primary text-xs py-2.5 px-5 inline-flex items-center gap-2"
-              >
-                <RotateCcw className="w-3.5 h-3.5" /> Clear Filters & View All
-              </button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-              {products.map((product) => (
-                <ProductCard3D
-                  key={product.id}
-                  product={product}
-                  onAddToCart={(p) => {
-                    addItem(p.id, 1);
-                    showToast(`Added ${p.name} to cart!`, 'success', 'Cart Updated');
-                  }}
-                  onWatchPrice={(p) => {
-                    setPriceWatchProduct(p);
-                    setTargetPriceInput(Math.round(p.finalPrice * 0.9).toString());
-                  }}
-                  onPreOrder={(p) => setPreOrderProduct(p)}
-                />
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 pt-6">
-              <button
-                disabled={page <= 0}
-                onClick={() => updateFilter('page', (page - 1).toString())}
-                className="p-2 rounded-full bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              {[...Array(totalPages)].map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => updateFilter('page', idx.toString())}
-                  className={`w-8 h-8 rounded-full text-xs font-bold transition-colors ${
-                    page === idx
-                      ? 'bg-brand-crimson text-white shadow-sm'
-                      : 'bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary shadow-sm'
-                  }`}
-                >
-                  {idx + 1}
-                </button>
-              ))}
-              <button
-                disabled={page >= totalPages - 1}
-                onClick={() => updateFilter('page', (page + 1).toString())}
-                className="p-2 rounded-full bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </main>
-      </div>
-
-      {/* 5. EDITORIAL PROMOTIONAL FEATURE SECTION */}
+      {/* 3. MARQUEE HARDWARE SPOTLIGHT (Layered Floating Panels) */}
       <section className="relative rounded-[36px] bg-brand-crimson text-white p-8 sm:p-12 overflow-hidden shadow-prem-lg">
-        {/* Decorative Curved Cream Shape */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white/[0.07] blur-2xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-white/[0.08] blur-3xl pointer-events-none" />
 
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-4">
@@ -628,40 +394,412 @@ export const StoreCatalog: React.FC = () => {
               FEATURED HARDWARE SPOTLIGHT
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif leading-tight">
-              Technology worth bringing home.
+              Lenovo ThinkPad X1 Carbon Gen 11
             </h2>
             <p className="text-xs sm:text-sm text-white/85 leading-relaxed max-w-lg">
-              Lenovo ThinkPad X1 Carbon Gen 11 with 32GB LPDDR5 RAM and 2.8K OLED Display. Built for unmatched engineering productivity.
+              14-inch Ultralight Carbon-Fiber chassis with 32GB LPDDR5 RAM and 2.8K OLED Display with anti-reflective coating. Built for unmatched engineering productivity.
             </p>
-            <div className="pt-2 flex items-center gap-4">
+            <div className="pt-2 flex flex-wrap items-center gap-4">
               <Link
                 to="/customer/product/1"
-                className="px-6 py-3 rounded-full bg-white text-brand-crimson font-bold text-xs hover:bg-[#F4F0E8] transition-all shadow-md inline-flex items-center gap-2"
+                className="px-6 py-3 rounded-full bg-white text-brand-crimson font-bold text-xs hover:bg-[#FAF8F5] transition-all shadow-md inline-flex items-center gap-2"
               >
-                Explore Details <ArrowRight className="w-3.5 h-3.5" />
+                Explore Details & Specs <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <span className="text-xs font-mono font-bold text-white/90">
-                ₹157,249 <span className="line-through text-white/60 text-[11px]">₹184,999</span>
+                ₹157,249 <span className="line-through text-white/60 text-[11px] ml-1">₹184,999</span>
               </span>
             </div>
           </div>
 
           <div className="lg:col-span-5 flex justify-center">
-            <div className="w-64 sm:w-72 h-64 sm:h-72 rounded-full bg-white/10 p-4 border border-white/20 flex items-center justify-center shadow-2xl backdrop-blur-sm">
+            <div className="w-64 sm:w-80 h-64 sm:h-80 rounded-full bg-white/10 p-6 border border-white/20 flex items-center justify-center shadow-2xl backdrop-blur-md">
               <img
                 src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=800&auto=format&fit=crop&q=80"
                 alt="Featured Laptop"
-                className="w-full h-full object-contain mix-blend-screen hover:scale-105 transition-transform duration-300"
+                className="w-full h-full object-contain mix-blend-screen hover:scale-108 transition-transform duration-300"
               />
             </div>
           </div>
         </div>
       </section>
 
-      {/* 6. PRICE WATCH MODAL (Editorial White) */}
+      {/* 4. MAIN FACETED DISCOVERY CATALOG */}
+      <div ref={catalogRef} className="space-y-6 pt-4">
+        {/* Active Filters Strip */}
+        {(categoryId || brandId || search || minPrice || maxPrice) && (
+          <div className="flex flex-wrap items-center gap-2 p-3.5 rounded-2xl bg-white border border-black/[0.06] shadow-prem-sm">
+            <span className="text-xs text-txt-muted font-medium">Active Filters:</span>
+            {selectedCategoryName && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF8F5] border border-black/[0.08] text-xs text-txt-primary">
+                Category: <strong className="text-brand-crimson">{selectedCategoryName}</strong>
+                <button onClick={() => removeFilter('categoryId')} className="hover:text-brand-crimson ml-1">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {selectedBrandName && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF8F5] border border-black/[0.08] text-xs text-txt-primary">
+                Brand: <strong className="text-brand-crimson">{selectedBrandName}</strong>
+                <button onClick={() => removeFilter('brandId')} className="hover:text-brand-crimson ml-1">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {search && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF8F5] border border-black/[0.08] text-xs text-txt-primary">
+                Query: <strong className="text-brand-crimson">"{search}"</strong>
+                <button onClick={() => removeFilter('search')} className="hover:text-brand-crimson ml-1">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            {(minPrice || maxPrice) && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FAF8F5] border border-black/[0.08] text-xs text-txt-primary">
+                Price: ₹{minPrice || 0} - ₹{maxPrice || '∞'}
+                <button onClick={() => { removeFilter('minPrice'); removeFilter('maxPrice'); }} className="hover:text-brand-crimson ml-1">
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            )}
+            <button
+              onClick={clearFilters}
+              className="text-xs text-brand-crimson hover:underline ml-auto flex items-center gap-1 font-semibold"
+            >
+              <RotateCcw className="w-3 h-3" /> Reset All Filters
+            </button>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
+          {/* SIDEBAR FILTERS (Sticky on Desktop) */}
+          <aside className="lg:col-span-1 space-y-4">
+            <div className="prem-card p-5 space-y-5 sticky top-20 bg-white border border-black/[0.08] rounded-[26px]">
+              <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
+                <span className="text-xs font-bold text-txt-primary uppercase tracking-wider flex items-center gap-2">
+                  <SlidersHorizontal className="w-3.5 h-3.5 text-brand-crimson" />
+                  Filter Catalog
+                </span>
+                <span className="text-[11px] text-txt-muted">{totalElements} items</span>
+              </div>
+
+              {/* Category Accordion */}
+              <div className="space-y-2">
+                <button
+                  onClick={() => setCatOpen(!catOpen)}
+                  className="w-full flex items-center justify-between text-xs font-bold text-txt-secondary hover:text-txt-primary uppercase tracking-wider"
+                >
+                  <span>Categories</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {catOpen && (
+                  <div className="space-y-1 max-h-48 overflow-y-auto pr-1 pt-1">
+                    <button
+                      onClick={() => updateFilter('categoryId', '')}
+                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors flex items-center justify-between ${
+                        !categoryId
+                          ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
+                          : 'text-txt-secondary hover:text-txt-primary hover:bg-[#FAF7F2]'
+                      }`}
+                    >
+                      <span>All Collections</span>
+                      <span className="text-[10px] text-txt-muted">{products.length}</span>
+                    </button>
+                    {categories.map((c) => (
+                      <button
+                        key={c.id}
+                        onClick={() => updateFilter('categoryId', c.id.toString())}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors flex items-center justify-between truncate ${
+                          categoryId === c.id.toString()
+                            ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
+                            : 'text-txt-secondary hover:text-txt-primary hover:bg-[#FAF7F2]'
+                        }`}
+                      >
+                        <span className="truncate">{c.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Brand Accordion */}
+              <div className="space-y-2 pt-2 border-t border-black/[0.06]">
+                <button
+                  onClick={() => setBrandOpen(!brandOpen)}
+                  className="w-full flex items-center justify-between text-xs font-bold text-txt-secondary hover:text-txt-primary uppercase tracking-wider"
+                >
+                  <span>Brands</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${brandOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {brandOpen && (
+                  <div className="space-y-1 max-h-40 overflow-y-auto pr-1 pt-1">
+                    <button
+                      onClick={() => updateFilter('brandId', '')}
+                      className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors ${
+                        !brandId
+                          ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
+                          : 'text-txt-secondary hover:text-txt-primary hover:bg-[#FAF7F2]'
+                      }`}
+                    >
+                      All Brands
+                    </button>
+                    {brands.map((b) => (
+                      <button
+                        key={b.id}
+                        onClick={() => updateFilter('brandId', b.id.toString())}
+                        className={`w-full text-left px-3 py-1.5 rounded-xl text-xs transition-colors ${
+                          brandId === b.id.toString()
+                            ? 'bg-brand-crimson/10 text-brand-crimson font-bold border border-brand-crimson/20'
+                            : 'text-txt-secondary hover:text-txt-primary hover:bg-[#FAF7F2]'
+                        }`}
+                      >
+                        {b.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Price Range Filter */}
+              <div className="space-y-2 pt-2 border-t border-black/[0.06]">
+                <button
+                  onClick={() => setPriceOpen(!priceOpen)}
+                  className="w-full flex items-center justify-between text-xs font-bold text-txt-secondary hover:text-txt-primary uppercase tracking-wider"
+                >
+                  <span>Price Range (₹)</span>
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${priceOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {priceOpen && (
+                  <div className="space-y-2 pt-1">
+                    <div className="grid grid-cols-2 gap-2">
+                      <input
+                        type="number"
+                        value={minPrice}
+                        onChange={(e) => updateFilter('minPrice', e.target.value)}
+                        placeholder="Min"
+                        className="prem-input text-xs w-full py-1.5"
+                      />
+                      <input
+                        type="number"
+                        value={maxPrice}
+                        onChange={(e) => updateFilter('maxPrice', e.target.value)}
+                        placeholder="Max"
+                        className="prem-input text-xs w-full py-1.5"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Quick Sort Shortcuts */}
+              <div className="pt-2 border-t border-black/[0.06] space-y-2">
+                <span className="text-[11px] font-bold text-txt-muted uppercase tracking-wider">Quick Sort</span>
+                <div className="grid grid-cols-2 gap-1.5">
+                  <button
+                    onClick={() => updateFilter('sort', 'demandScore,desc')}
+                    className={`px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border text-center transition-all ${
+                      sort.includes('demandScore')
+                        ? 'bg-brand-crimson text-white border-brand-crimson'
+                        : 'bg-[#FAF8F5] border-black/[0.06] text-txt-secondary hover:text-txt-primary'
+                    }`}
+                  >
+                    🔥 High Demand
+                  </button>
+                  <button
+                    onClick={() => updateFilter('sort', 'price,asc')}
+                    className={`px-2.5 py-1.5 rounded-xl text-[11px] font-semibold border text-center transition-all ${
+                      sort === 'price,asc'
+                        ? 'bg-brand-crimson text-white border-brand-crimson'
+                        : 'bg-[#FAF8F5] border-black/[0.06] text-txt-secondary hover:text-txt-primary'
+                    }`}
+                  >
+                    💰 Best Price
+                  </button>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* PRODUCTS GRID */}
+          <main className="lg:col-span-3 space-y-6">
+            {/* Top Controls Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
+              <div className="text-xs text-txt-secondary">
+                Showing <strong className="text-txt-primary">{products.length}</strong> of {totalElements} verified products
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-txt-muted font-medium">Sort by:</span>
+                <select
+                  value={sort}
+                  onChange={(e) => updateFilter('sort', e.target.value)}
+                  className="prem-input text-xs py-1.5 px-3 rounded-full cursor-pointer bg-white"
+                >
+                  <option value="demandScore,desc">Demand Intelligence Score</option>
+                  <option value="price,asc">Price: Low to High</option>
+                  <option value="price,desc">Price: High to Low</option>
+                  <option value="rating,desc">Customer Rating</option>
+                  <option value="salesVelocity,desc">Sales Velocity</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Product Cards Grid with 3D Interaction */}
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <div key={i} className="prem-card p-5 space-y-4 skeleton-shimmer h-96 rounded-[26px]" />
+                ))}
+              </div>
+            ) : products.length === 0 ? (
+              <div className="prem-card p-12 text-center space-y-4 max-w-lg mx-auto bg-white rounded-[26px]">
+                <div className="w-14 h-14 rounded-full bg-brand-crimson/10 flex items-center justify-center mx-auto text-brand-crimson">
+                  <Search className="w-6 h-6" />
+                </div>
+                <h3 className="text-lg font-serif text-txt-primary">Nothing matched those filters</h3>
+                <p className="text-xs text-txt-secondary">
+                  Try clearing your search filters or explore our trending hardware collections.
+                </p>
+                <button
+                  onClick={clearFilters}
+                  className="prem-btn-primary text-xs py-2.5 px-5 inline-flex items-center gap-2"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" /> Clear Filters & View All
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {products.map((product) => (
+                  <ProductCard3D
+                    key={product.id}
+                    product={product}
+                    onAddToCart={(p) => {
+                      addItem(p.id, 1);
+                      showToast(`Added ${p.name} to bag!`, 'success', 'Bag Updated');
+                    }}
+                    onWatchPrice={(p) => {
+                      setPriceWatchProduct(p);
+                      setTargetPriceInput(Math.round(p.finalPrice * 0.9).toString());
+                    }}
+                    onPreOrder={(p) => setPreOrderProduct(p)}
+                    onQuickView={(p) => setQuickViewProduct(p)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 pt-6">
+                <button
+                  disabled={page <= 0}
+                  onClick={() => updateFilter('page', (page - 1).toString())}
+                  className="p-2 rounded-full bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                {[...Array(totalPages)].map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => updateFilter('page', idx.toString())}
+                    className={`w-8 h-8 rounded-full text-xs font-bold transition-colors ${
+                      page === idx
+                        ? 'bg-brand-crimson text-white shadow-sm'
+                        : 'bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary shadow-sm'
+                    }`}
+                  >
+                    {idx + 1}
+                  </button>
+                ))}
+                <button
+                  disabled={page >= totalPages - 1}
+                  onClick={() => updateFilter('page', (page + 1).toString())}
+                  className="p-2 rounded-full bg-white border border-black/[0.08] text-txt-secondary hover:text-txt-primary disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+
+      {/* 5. "COMPLETE THE LOOK" HARDWARE BUNDLE BUILDER */}
+      {products.length >= 3 && <BundleBuilderSection products={products} />}
+
+      {/* 6. HORIZONTAL "TRENDING RIGHT NOW" CAROUSEL */}
+      <section className="space-y-4 pt-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-full bg-brand-crimson text-white flex items-center justify-center shadow-sm">
+              <Flame className="w-4 h-4" />
+            </div>
+            <div>
+              <h2 className="text-xl sm:text-2xl font-serif text-txt-primary">Trending Right Now</h2>
+              <p className="text-xs text-txt-muted">Highest conversion velocity & customer watchlists</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => handleTrendingScroll('left')}
+              className="p-2 rounded-full bg-white border border-black/[0.08] hover:border-brand-crimson text-txt-secondary hover:text-txt-primary shadow-sm transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => handleTrendingScroll('right')}
+              className="p-2 rounded-full bg-white border border-black/[0.08] hover:border-brand-crimson text-txt-secondary hover:text-txt-primary shadow-sm transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <div
+          ref={trendingRef}
+          className="flex gap-6 overflow-x-auto pb-4 pt-1 scroll-smooth no-scrollbar"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {products.slice(0, 6).map((item) => (
+            <div key={item.id} className="w-72 sm:w-80 flex-shrink-0">
+              <ProductCard3D
+                product={item}
+                onAddToCart={(p) => {
+                  addItem(p.id, 1);
+                  showToast(`Added ${p.name} to bag!`, 'success');
+                }}
+                onWatchPrice={(p) => {
+                  setPriceWatchProduct(p);
+                  setTargetPriceInput(Math.round(p.finalPrice * 0.9).toString());
+                }}
+                onPreOrder={(p) => setPreOrderProduct(p)}
+                onQuickView={(p) => setQuickViewProduct(p)}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 7. CUSTOMER REVIEWS & EDITORIAL TESTIMONIALS */}
+      <CustomerReviewsSection />
+
+      {/* 8. RECENTLY VIEWED TRAIL */}
+      <RecentlyViewedSection />
+
+      {/* 9. VIP NEWSLETTER BANNER */}
+      <NewsletterSection />
+
+      {/* QUICK VIEW MODAL */}
+      <QuickViewModal
+        product={quickViewProduct}
+        isOpen={Boolean(quickViewProduct)}
+        onClose={() => setQuickViewProduct(null)}
+      />
+
+      {/* PRICE WATCH MODAL */}
       {priceWatchProduct && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="prem-card max-w-md w-full p-6 space-y-5 shadow-2xl border border-black/[0.12] bg-white animate-fade-in">
+          <div className="prem-card max-w-md w-full p-6 space-y-5 shadow-2xl border border-black/[0.12] bg-white animate-fade-in rounded-3xl">
             <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
               <div className="flex items-center gap-2">
                 <Bell className="w-4 h-4 text-brand-crimson" />
@@ -672,11 +810,11 @@ export const StoreCatalog: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#F7F4EE] border border-black/[0.04]">
-              <img src={priceWatchProduct.mainImageUrl} alt="" className="w-12 h-12 object-cover rounded-xl mix-blend-multiply" />
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#FAF7F2] border border-black/[0.04]">
+              <img src={priceWatchProduct.mainImageUrl} alt="" className="w-12 h-12 object-contain rounded-xl mix-blend-multiply" />
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-bold text-txt-primary truncate">{priceWatchProduct.name}</div>
-                <div className="text-xs text-txt-muted">Current: <span className="font-bold text-txt-primary">₹{priceWatchProduct.finalPrice.toLocaleString()}</span></div>
+                <div className="text-xs text-txt-muted">Current: <span className="font-bold text-txt-primary font-sans">₹{priceWatchProduct.finalPrice.toLocaleString()}</span></div>
               </div>
             </div>
 
@@ -690,11 +828,11 @@ export const StoreCatalog: React.FC = () => {
                   required
                   value={targetPriceInput}
                   onChange={(e) => setTargetPriceInput(e.target.value)}
-                  className="prem-input text-sm w-full py-2"
+                  className="prem-input text-sm w-full py-2 font-mono"
                   placeholder="e.g. 25000"
                 />
                 <p className="text-[10px] text-txt-muted mt-1">
-                  We will automatically notify you when this item drops to or below your target price.
+                  We will automatically alert you when this hardware drops to or below your target threshold.
                 </p>
               </div>
 
@@ -719,10 +857,10 @@ export const StoreCatalog: React.FC = () => {
         </div>
       )}
 
-      {/* 7. PRE-ORDER MODAL (Editorial White) */}
+      {/* PRE-ORDER MODAL */}
       {preOrderProduct && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="prem-card max-w-md w-full p-6 space-y-5 shadow-2xl border border-black/[0.12] bg-white animate-fade-in">
+          <div className="prem-card max-w-md w-full p-6 space-y-5 shadow-2xl border border-black/[0.12] bg-white animate-fade-in rounded-3xl">
             <div className="flex items-center justify-between pb-3 border-b border-black/[0.06]">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-brand-gold" />
@@ -733,8 +871,8 @@ export const StoreCatalog: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#F7F4EE] border border-black/[0.04]">
-              <img src={preOrderProduct.mainImageUrl} alt="" className="w-12 h-12 object-cover rounded-xl mix-blend-multiply" />
+            <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#FAF7F2] border border-black/[0.04]">
+              <img src={preOrderProduct.mainImageUrl} alt="" className="w-12 h-12 object-contain rounded-xl mix-blend-multiply" />
               <div className="min-w-0 flex-1">
                 <div className="text-xs font-bold text-txt-primary truncate">{preOrderProduct.name}</div>
                 <div className="text-xs text-txt-muted">Price: ₹{preOrderProduct.finalPrice.toLocaleString()}</div>
@@ -744,7 +882,7 @@ export const StoreCatalog: React.FC = () => {
             <div className="p-3.5 rounded-2xl bg-brand-gold/10 border border-brand-gold/25 text-xs text-txt-secondary space-y-1">
               <div className="font-semibold text-txt-primary">📦 Guaranteed Priority Allocation</div>
               <p className="text-[11px] text-txt-muted leading-relaxed">
-                By reserving this pre-order, you secure priority shipping as soon as the factory shipment arrives.
+                By reserving this pre-order, you secure priority dispatch as soon as the factory shipment arrives.
               </p>
             </div>
 

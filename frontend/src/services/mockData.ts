@@ -14,6 +14,7 @@ import {
   Coupon,
   AuditLogItem,
   UserProfile,
+  SmartDealRecommendation,
 } from '../types';
 
 export const MOCK_CATEGORIES: Category[] = [
@@ -137,6 +138,10 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 18,
     weight: 0.25,
     mainImageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1545127398-14699f92334b?w=800&auto=format&fit=crop&q=80',
+    ],
     rating: 4.7,
     reviewCount: 65,
     active: true,
@@ -148,10 +153,14 @@ export const MOCK_PRODUCTS: Product[] = [
     reorderPoint: 6,
     preOrderEnabled: false,
     preOrderCount: 0,
-    variants: [],
+    variants: [
+      { id: 5, sku: 'AUD-BOSE-STUDIO-BLK', attributesJson: '{"Color":"Triple Black"}', stock: 10, active: true },
+      { id: 6, sku: 'AUD-BOSE-STUDIO-WHT', attributesJson: '{"Color":"White Smoke"}', stock: 8, active: true },
+    ],
     specifications: [
       { specKey: 'Battery Life', specValue: 'Up to 24 Hours' },
       { specKey: 'ANC Mode', specValue: 'CustomTune & Immersive Audio' },
+      { specKey: 'Weight', specValue: '250 grams' },
     ],
   },
   {
@@ -171,6 +180,9 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 0,
     weight: 1.75,
     mainImageUrl: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&auto=format&fit=crop&q=80',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&auto=format&fit=crop&q=80',
+    ],
     rating: 4.9,
     reviewCount: 31,
     active: true,
@@ -183,10 +195,13 @@ export const MOCK_PRODUCTS: Product[] = [
     preOrderEnabled: true,
     preOrderExpectedAvailability: '10 Days',
     preOrderCount: 8,
-    variants: [],
+    variants: [
+      { id: 7, sku: 'GAM-KEYC-Q1PRO-RED', attributesJson: '{"Switch":"Keychron K Pro Red (Linear)"}', stock: 0, active: true },
+      { id: 8, sku: 'GAM-KEYC-Q1PRO-BRN', attributesJson: '{"Switch":"Keychron K Pro Brown (Tactile)"}', stock: 0, active: true },
+    ],
     specifications: [
       { specKey: 'Body', specValue: 'CNC Machined Anodized Aluminum' },
-      { specKey: 'Switches', specValue: 'Keychron K Pro Red (Lubed)' },
+      { specKey: 'Switches', specValue: 'Keychron K Pro (Hot-swappable)' },
       { specKey: 'Connectivity', specValue: 'Bluetooth 5.1 & Type-C Wired' },
     ],
   },
@@ -207,6 +222,9 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 6,
     weight: 0.18,
     mainImageUrl: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=800&auto=format&fit=crop&q=80',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1625842268584-8f3296236761?w=800&auto=format&fit=crop&q=80',
+    ],
     rating: 4.6,
     reviewCount: 54,
     active: true,
@@ -241,6 +259,9 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 15,
     weight: 0.25,
     mainImageUrl: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&auto=format&fit=crop&q=80',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=800&auto=format&fit=crop&q=80',
+    ],
     rating: 4.8,
     reviewCount: 92,
     active: true,
@@ -252,7 +273,10 @@ export const MOCK_PRODUCTS: Product[] = [
     reorderPoint: 5,
     preOrderEnabled: false,
     preOrderCount: 0,
-    variants: [],
+    variants: [
+      { id: 9, sku: 'AUD-SONY-XM5-BLK', attributesJson: '{"Color":"Black"}', stock: 9, active: true },
+      { id: 10, sku: 'AUD-SONY-XM5-SLV', attributesJson: '{"Color":"Silver"}', stock: 6, active: true },
+    ],
     specifications: [
       { specKey: 'Battery', specValue: '30 Hours with Quick Charge' },
       { specKey: 'Codecs', specValue: 'LDAC, AAC, SBC' },
@@ -275,6 +299,9 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 25,
     weight: 0.14,
     mainImageUrl: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=800&auto=format&fit=crop&q=80',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&auto=format&fit=crop&q=80',
+    ],
     rating: 4.9,
     reviewCount: 110,
     active: true,
@@ -286,7 +313,10 @@ export const MOCK_PRODUCTS: Product[] = [
     reorderPoint: 10,
     preOrderEnabled: false,
     preOrderCount: 0,
-    variants: [],
+    variants: [
+      { id: 11, sku: 'ACC-LOGI-MX3S-GRY', attributesJson: '{"Color":"Space Gray"}', stock: 15, active: true },
+      { id: 12, sku: 'ACC-LOGI-MX3S-WHT', attributesJson: '{"Color":"Pale Gray"}', stock: 10, active: true },
+    ],
     specifications: [
       { specKey: 'Sensor', specValue: 'Darkfield 8000 DPI' },
       { specKey: 'Battery', specValue: 'Up to 70 Days per full charge' },
@@ -309,6 +339,9 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 40,
     weight: 0.05,
     mainImageUrl: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80',
+    additionalImages: [
+      'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&auto=format&fit=crop&q=80',
+    ],
     rating: 4.2,
     reviewCount: 12,
     active: true,
@@ -581,3 +614,25 @@ export const MOCK_USERS: UserProfile[] = [
   { id: 3, username: 'order_mgr', email: 'orders@commerce.ai', fullName: 'Marcus Vance (Fulfillment Ops)', enabled: true, roles: ['ROLE_ORDER_MANAGER'], totalOrdersPlaced: 0, totalSpent: 0 },
   { id: 4, username: 'customer1', email: 'alex.johnson@example.com', fullName: 'Alex Johnson', enabled: true, roles: ['ROLE_CUSTOMER'], totalOrdersPlaced: 3, totalSpent: 245000 },
 ];
+
+export const MOCK_SMART_DEALS: SmartDealRecommendation[] = [
+  {
+    productId: 3,
+    productName: 'Bose QuietComfort Ultra Noise-Cancelling Headphones',
+    currentPrice: 32310.0,
+    recommendedPrice: 29999.0,
+    recommendedDiscountPercentage: 8,
+    dealReason: '18 waiting price-watch buyers clustered at ₹29,999 threshold.',
+    potentialImpact: 'High conversion velocity — Estimated +₹5.4L incremental revenue.'
+  },
+  {
+    productId: 5,
+    productName: 'Dell 7-in-1 Dual 4K USB-C Multiport Adapter',
+    currentPrice: 7299.0,
+    recommendedPrice: 6599.0,
+    recommendedDiscountPercentage: 10,
+    dealReason: '34 search impressions this week with high cart-add intent.',
+    potentialImpact: 'Accelerates dead-stock clearance before new batch arrival.'
+  }
+];
+

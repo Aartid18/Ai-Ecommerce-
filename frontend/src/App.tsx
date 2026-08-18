@@ -3,12 +3,15 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet, Link } from 'react-rout
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext';
+import { RecentlyViewedProvider } from './context/RecentlyViewedContext';
 
 // Layout Components
 import { Navbar } from './components/layout/Navbar';
 import { AdminSidebar } from './components/layout/AdminSidebar';
 import { ActivityFeedBanner } from './components/layout/ActivityFeedBanner';
 import { CartDrawer } from './components/layout/CartDrawer';
+import { MobileBottomNav } from './components/layout/MobileBottomNav';
 
 // Auth Pages
 import { LoginPage } from './pages/auth/LoginPage';
@@ -45,8 +48,9 @@ const CustomerLayout: React.FC = () => {
         <Outlet />
       </main>
       <CartDrawer />
+      <MobileBottomNav />
       {/* Large Premium Editorial Footer */}
-      <footer className="relative z-10 bg-[#171717] text-[#F4F0E8] pt-16 pb-12 px-6 sm:px-12 mt-16 rounded-t-[48px] shadow-2xl border-t border-black/20">
+      <footer className="relative z-10 bg-[#141414] text-[#FAF8F5] pt-16 pb-20 md:pb-12 px-6 sm:px-12 mt-16 rounded-t-[48px] shadow-2xl border-t border-black/20">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-white/10">
             {/* Column 1: Brand & Vision */}
@@ -141,66 +145,70 @@ export const App: React.FC = () => {
   return (
     <ToastProvider>
       <AuthProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Auth Routes */}
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+        <WishlistProvider>
+          <RecentlyViewedProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <Routes>
+                  {/* Auth Routes */}
+                  <Route path="/login" element={<LoginPage />} />
+                  <Route path="/register" element={<RegisterPage />} />
 
-              {/* Customer Routes */}
-              <Route element={<CustomerLayout />}>
-                <Route path="/" element={<Navigate to="/customer/products" replace />} />
-                <Route path="/customer/products" element={<StoreCatalog />} />
-                <Route path="/customer/product/:id" element={<ProductDetail />} />
-                <Route path="/customer/cart" element={<CartPage />} />
-                <Route path="/customer/checkout" element={<CheckoutPage />} />
-                <Route path="/customer/dashboard" element={<CustomerDashboard />} />
-                <Route path="/customer/orders" element={<CustomerDashboard />} />
-                <Route path="/customer/wishlist" element={<CustomerDashboard />} />
-                <Route path="/customer/preorders" element={<CustomerDashboard />} />
-                <Route path="/customer/price-watches" element={<CustomerDashboard />} />
-                <Route path="/customer/profile" element={<CustomerDashboard />} />
-                <Route path="/customer/ai-assistant" element={<CustomerAiCopilot />} />
-              </Route>
+                  {/* Customer Routes */}
+                  <Route element={<CustomerLayout />}>
+                    <Route path="/" element={<Navigate to="/customer/products" replace />} />
+                    <Route path="/customer/products" element={<StoreCatalog />} />
+                    <Route path="/customer/product/:id" element={<ProductDetail />} />
+                    <Route path="/customer/cart" element={<CartPage />} />
+                    <Route path="/customer/checkout" element={<CheckoutPage />} />
+                    <Route path="/customer/dashboard" element={<CustomerDashboard />} />
+                    <Route path="/customer/orders" element={<CustomerDashboard />} />
+                    <Route path="/customer/wishlist" element={<CustomerDashboard />} />
+                    <Route path="/customer/preorders" element={<CustomerDashboard />} />
+                    <Route path="/customer/price-watches" element={<CustomerDashboard />} />
+                    <Route path="/customer/profile" element={<CustomerDashboard />} />
+                    <Route path="/customer/ai-assistant" element={<CustomerAiCopilot />} />
+                  </Route>
 
-              {/* Admin & Operations Routes */}
-              <Route element={<AdminLayout />}>
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                <Route path="/admin/analytics" element={<AdminDashboard />} />
-                <Route path="/admin/demand-radar" element={<DemandRadarPage />} />
-                <Route path="/admin/ai-copilot" element={<SellerAiCopilot />} />
-                <Route path="/admin/inventory" element={<InventoryOperationsPage />} />
-                <Route path="/admin/products" element={<InventoryOperationsPage />} />
-                <Route path="/admin/categories" element={<InventoryOperationsPage />} />
-                <Route path="/admin/brands" element={<InventoryOperationsPage />} />
-                <Route path="/admin/preorders" element={<SmartPreOrdersPage />} />
-                <Route path="/admin/orders" element={<OrderRiskManagementPage />} />
-                <Route path="/admin/risk" element={<OrderRiskManagementPage />} />
-                <Route path="/admin/returns" element={<ReturnsManagementPage />} />
-                <Route path="/admin/coupons" element={<CouponsAndAuditPage />} />
-                <Route path="/admin/users" element={<CouponsAndAuditPage />} />
-                <Route path="/admin/audit-logs" element={<CouponsAndAuditPage />} />
+                  {/* Admin & Operations Routes */}
+                  <Route element={<AdminLayout />}>
+                    <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                    <Route path="/admin/analytics" element={<AdminDashboard />} />
+                    <Route path="/admin/demand-radar" element={<DemandRadarPage />} />
+                    <Route path="/admin/ai-copilot" element={<SellerAiCopilot />} />
+                    <Route path="/admin/inventory" element={<InventoryOperationsPage />} />
+                    <Route path="/admin/products" element={<InventoryOperationsPage />} />
+                    <Route path="/admin/categories" element={<InventoryOperationsPage />} />
+                    <Route path="/admin/brands" element={<InventoryOperationsPage />} />
+                    <Route path="/admin/preorders" element={<SmartPreOrdersPage />} />
+                    <Route path="/admin/orders" element={<OrderRiskManagementPage />} />
+                    <Route path="/admin/risk" element={<OrderRiskManagementPage />} />
+                    <Route path="/admin/returns" element={<ReturnsManagementPage />} />
+                    <Route path="/admin/coupons" element={<CouponsAndAuditPage />} />
+                    <Route path="/admin/users" element={<CouponsAndAuditPage />} />
+                    <Route path="/admin/audit-logs" element={<CouponsAndAuditPage />} />
 
-                {/* Direct Manager Shortcuts */}
-                <Route path="/inventory/dashboard" element={<InventoryOperationsPage />} />
-                <Route path="/inventory/products" element={<InventoryOperationsPage />} />
-                <Route path="/inventory/forecast" element={<InventoryOperationsPage />} />
-                <Route path="/inventory/dead-stock" element={<InventoryOperationsPage />} />
-                <Route path="/inventory/reorders" element={<InventoryOperationsPage />} />
-                <Route path="/inventory/suppliers" element={<InventoryOperationsPage />} />
+                    {/* Direct Manager Shortcuts */}
+                    <Route path="/inventory/dashboard" element={<InventoryOperationsPage />} />
+                    <Route path="/inventory/products" element={<InventoryOperationsPage />} />
+                    <Route path="/inventory/forecast" element={<InventoryOperationsPage />} />
+                    <Route path="/inventory/dead-stock" element={<InventoryOperationsPage />} />
+                    <Route path="/inventory/reorders" element={<InventoryOperationsPage />} />
+                    <Route path="/inventory/suppliers" element={<InventoryOperationsPage />} />
 
-                <Route path="/orders/dashboard" element={<OrderRiskManagementPage />} />
-                <Route path="/orders/manage" element={<OrderRiskManagementPage />} />
-                <Route path="/orders/risk" element={<OrderRiskManagementPage />} />
-                <Route path="/orders/returns" element={<ReturnsManagementPage />} />
-              </Route>
+                    <Route path="/orders/dashboard" element={<OrderRiskManagementPage />} />
+                    <Route path="/orders/manage" element={<OrderRiskManagementPage />} />
+                    <Route path="/orders/risk" element={<OrderRiskManagementPage />} />
+                    <Route path="/orders/returns" element={<ReturnsManagementPage />} />
+                  </Route>
 
-              {/* Catch-all fallback */}
-              <Route path="*" element={<Navigate to="/customer/products" replace />} />
-            </Routes>
-          </BrowserRouter>
-        </CartProvider>
+                  {/* Catch-all fallback */}
+                  <Route path="*" element={<Navigate to="/customer/products" replace />} />
+                </Routes>
+              </BrowserRouter>
+            </CartProvider>
+          </RecentlyViewedProvider>
+        </WishlistProvider>
       </AuthProvider>
     </ToastProvider>
   );

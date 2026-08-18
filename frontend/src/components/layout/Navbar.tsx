@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { CommandPalette } from './CommandPalette';
 import { NotificationDrawer } from './NotificationDrawer';
+import { MegaMenu } from './MegaMenu';
+import { MOCK_CATEGORIES, MOCK_PRODUCTS } from '../../services/mockData';
 import {
   ShoppingBag,
   Search,
   Sparkles,
   Bell,
+  Heart,
   LayoutDashboard,
   LogOut,
   ChevronDown,
@@ -19,13 +23,35 @@ import {
 export const Navbar: React.FC = () => {
   const { user, isAuthenticated, logout, switchDemoPersona, isAdmin, isInventoryManager, isOrderManager } = useAuth();
   const { itemCount, setIsOpen: setCartOpen } = useCart();
+  const { wishlistCount } = useWishlist();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [isScrolled, setIsScrolled] = useState<boolean>(false);
+  const [showMegaMenu, setShowMegaMenu] = useState<boolean>(false);
   const [showCommandPalette, setShowCommandPalette] = useState<boolean>(false);
   const [showNotificationDrawer, setShowNotificationDrawer] = useState<boolean>(false);
   const [showUserMenu, setShowUserMenu] = useState<boolean>(false);
   const [showPersonaMenu, setShowPersonaMenu] = useState<boolean>(false);
+  const [cartBouncing, setCartBouncing] = useState<boolean>(false);
+
+  // Shrink navbar on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Cart bounce animation on itemCount change
+  useEffect(() => {
+    if (itemCount > 0) {
+      setCartBouncing(true);
+      const timer = setTimeout(() => setCartBouncing(false), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [itemCount]);
 
   // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
@@ -41,12 +67,18 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <nav className="sticky top-0 z-30 bg-[#F4F0E8]/90 backdrop-blur-xl border-b border-black/[0.06] transition-all duration-200">
+      <nav
+        className={`sticky top-0 z-30 transition-all duration-300 ${
+          isScrolled
+            ? 'bg-[#FAF8F5]/95 backdrop-blur-xl border-b border-black/[0.08] shadow-prem-sm py-2'
+            : 'bg-[#FAF8F5]/85 backdrop-blur-md border-b border-black/[0.05] py-3.5'
+        }`}
+      >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 gap-4">
+          <div className="flex items-center justify-between gap-4">
             {/* Brand Logo & Identifier */}
             <Link to="/customer/products" className="flex items-center gap-2.5 flex-shrink-0 group">
-              <div className="w-8 h-8 rounded-full bg-brand-crimson text-white flex items-center justify-center shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-brand-crimson text-white flex items-center justify-center shadow-md group-hover:scale-105 transition-transform">
                 <Sparkles className="w-4 h-4" />
               </div>
               <div>
@@ -54,26 +86,33 @@ export const Navbar: React.FC = () => {
                   AI Commerce <span className="text-brand-crimson text-[9px] px-1.5 py-0.5 bg-brand-crimson/10 rounded-full font-bold font-sans">INTELLIGENCE</span>
                 </div>
                 <div className="text-[10px] text-txt-muted hidden sm:block">
-                  Demand Radar & Operations
+                  Next-Gen Hardware Marketplace
                 </div>
               </div>
             </Link>
 
-            {/* Main Navigation Links */}
+            {/* Main Navigation Links with Mega Menu Hover */}
             <div className="hidden md:flex items-center gap-1">
-              <Link
-                to="/customer/products"
-                className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
-                  location.pathname === '/customer/products'
-                    ? 'text-brand-crimson bg-brand-crimson/10 font-bold'
-                    : 'text-txt-secondary hover:text-txt-primary hover:bg-black/[0.04]'
-                }`}
+              <div
+                onMouseEnter={() => setShowMegaMenu(true)}
+                className="relative"
               >
-                Catalog
-              </Link>
+                <Link
+                  to="/customer/products"
+                  className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-all flex items-center gap-1 ${
+                    location.pathname === '/customer/products'
+                      ? 'text-brand-crimson bg-brand-crimson/10 font-bold'
+                      : 'text-txt-secondary hover:text-txt-primary hover:bg-black/[0.04]'
+                  }`}
+                >
+                  <span>Catalog</span>
+                  <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${showMegaMenu ? 'rotate-180' : ''}`} />
+                </Link>
+              </div>
+
               <Link
                 to="/admin/demand-radar"
-                className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors ${
                   location.pathname.startsWith('/admin/demand-radar')
                     ? 'text-brand-crimson bg-brand-crimson/10 font-bold'
                     : 'text-txt-secondary hover:text-txt-primary hover:bg-black/[0.04]'
@@ -81,20 +120,22 @@ export const Navbar: React.FC = () => {
               >
                 Demand Radar
               </Link>
+
               <Link
                 to="/customer/ai-assistant"
-                className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors flex items-center gap-1.5 ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors flex items-center gap-1.5 ${
                   location.pathname === '/customer/ai-assistant'
                     ? 'text-brand-crimson bg-brand-crimson/10 font-bold'
                     : 'text-txt-secondary hover:text-txt-primary hover:bg-black/[0.04]'
                 }`}
               >
                 <Sparkles className="w-3.5 h-3.5 text-brand-crimson" />
-                AI Shopping Copilot
+                <span>AI Copilot</span>
               </Link>
+
               <Link
                 to="/customer/dashboard"
-                className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
+                className={`px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors ${
                   location.pathname.startsWith('/customer/dashboard') || location.pathname.startsWith('/customer/orders')
                     ? 'text-brand-crimson bg-brand-crimson/10 font-bold'
                     : 'text-txt-secondary hover:text-txt-primary hover:bg-black/[0.04]'
@@ -105,17 +146,17 @@ export const Navbar: React.FC = () => {
             </div>
 
             {/* Global Search / Command Bar Trigger */}
-            <div className="flex-1 max-w-sm hidden lg:block">
+            <div className="flex-1 max-w-xs hidden lg:block">
               <button
                 type="button"
                 onClick={() => setShowCommandPalette(true)}
-                className="w-full flex items-center justify-between bg-white border border-black/[0.08] hover:border-brand-crimson/50 rounded-full px-3.5 py-1.5 text-xs text-txt-muted transition-all text-left shadow-sm"
+                className="w-full flex items-center justify-between bg-white border border-black/[0.08] hover:border-brand-crimson/50 rounded-full px-3.5 py-1.5 text-xs text-txt-muted transition-all text-left shadow-sm hover:shadow-prem-sm"
               >
                 <div className="flex items-center gap-2">
                   <Search className="w-3.5 h-3.5 text-brand-crimson" />
-                  <span>Search products, specs, signals...</span>
+                  <span className="truncate">Search products & signals...</span>
                 </div>
-                <kbd className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono text-txt-muted bg-[#F4F0E8] border border-black/[0.08] rounded-full">
+                <kbd className="inline-flex items-center gap-0.5 px-2 py-0.5 text-[10px] font-mono text-txt-muted bg-[#FAF8F5] border border-black/[0.08] rounded-full">
                   <Command className="w-2.5 h-2.5" /> K
                 </kbd>
               </button>
@@ -139,8 +180,8 @@ export const Navbar: React.FC = () => {
                 </button>
 
                 {showPersonaMenu && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white border border-black/[0.10] rounded-2xl shadow-2xl p-2 z-50 animate-fade-in">
-                    <div className="text-[10px] font-bold text-txt-muted uppercase tracking-wider px-2 py-1">
+                  <div className="absolute right-0 mt-2 w-64 bg-white border border-black/[0.10] rounded-3xl shadow-2xl p-2 z-50 animate-fade-in">
+                    <div className="text-[10px] font-bold text-txt-muted uppercase tracking-wider px-2.5 py-1">
                       Select Demo Persona
                     </div>
                     <button
@@ -149,11 +190,11 @@ export const Navbar: React.FC = () => {
                         setShowPersonaMenu(false);
                         navigate('/admin/dashboard');
                       }}
-                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F7F4EE] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between"
+                      className="w-full text-left px-2.5 py-2 rounded-2xl hover:bg-[#FAF7F2] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between transition-colors"
                     >
                       <div>
-                        <div className="font-semibold text-txt-primary">👑 Admin (Full Access)</div>
-                        <div className="text-[10px] text-txt-muted">Demand Radar, Pricing, Analytics</div>
+                        <div className="font-semibold text-txt-primary">👑 Admin (Executive)</div>
+                        <div className="text-[10px] text-txt-muted">Full Access, Demand Radar, POs</div>
                       </div>
                     </button>
                     <button
@@ -162,11 +203,11 @@ export const Navbar: React.FC = () => {
                         setShowPersonaMenu(false);
                         navigate('/inventory/dashboard');
                       }}
-                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F7F4EE] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between"
+                      className="w-full text-left px-2.5 py-2 rounded-2xl hover:bg-[#FAF7F2] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between transition-colors"
                     >
                       <div>
                         <div className="font-semibold text-txt-primary">📦 Inventory Manager</div>
-                        <div className="text-[10px] text-txt-muted">Stockouts, Dead-stock, POs</div>
+                        <div className="text-[10px] text-txt-muted">Stockouts, Reorders, Suppliers</div>
                       </div>
                     </button>
                     <button
@@ -175,11 +216,11 @@ export const Navbar: React.FC = () => {
                         setShowPersonaMenu(false);
                         navigate('/orders/dashboard');
                       }}
-                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F7F4EE] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between"
+                      className="w-full text-left px-2.5 py-2 rounded-2xl hover:bg-[#FAF7F2] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between transition-colors"
                     >
                       <div>
                         <div className="font-semibold text-txt-primary">🛡️ Order & Risk Manager</div>
-                        <div className="text-[10px] text-txt-muted">Order lifecycle, Risk review</div>
+                        <div className="text-[10px] text-txt-muted">Risk Score Review, Returns</div>
                       </div>
                     </button>
                     <button
@@ -188,27 +229,41 @@ export const Navbar: React.FC = () => {
                         setShowPersonaMenu(false);
                         navigate('/customer/products');
                       }}
-                      className="w-full text-left px-2.5 py-2 rounded-xl hover:bg-[#F7F4EE] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between"
+                      className="w-full text-left px-2.5 py-2 rounded-2xl hover:bg-[#FAF7F2] text-xs text-txt-secondary hover:text-txt-primary flex items-center justify-between transition-colors"
                     >
                       <div>
                         <div className="font-semibold text-txt-primary">🛍️ Customer (Alex Johnson)</div>
-                        <div className="text-[10px] text-txt-muted">Storefront, Price watch, Pre-order</div>
+                        <div className="text-[10px] text-txt-muted">Catalog, Price Watch, Cart</div>
                       </div>
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Operations Shortcut */}
+              {/* Operations Shortcut if Staff */}
               {(isAdmin || isInventoryManager || isOrderManager) && (
                 <Link
                   to={isAdmin ? '/admin/dashboard' : isInventoryManager ? '/inventory/dashboard' : '/orders/dashboard'}
-                  className="p-2 text-txt-secondary hover:text-brand-crimson hover:bg-black/[0.04] rounded-full transition-colors"
-                  title="Operations Dashboard"
+                  className="p-2 text-txt-secondary hover:text-brand-crimson hover:bg-black/[0.04] rounded-full transition-colors hidden sm:flex"
+                  title="Operations Center"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                 </Link>
               )}
+
+              {/* Wishlist Trigger */}
+              <Link
+                to="/customer/dashboard"
+                className="p-2 text-txt-secondary hover:text-brand-crimson hover:bg-black/[0.04] rounded-full transition-colors relative"
+                title="Wishlist"
+              >
+                <Heart className="w-4 h-4" />
+                {wishlistCount > 0 && (
+                  <span className="absolute top-1 right-1 w-4 h-4 bg-brand-crimson text-white font-bold text-[9px] rounded-full flex items-center justify-center shadow-sm">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
 
               {/* Notification Drawer Trigger */}
               <button
@@ -220,11 +275,13 @@ export const Navbar: React.FC = () => {
                 <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-brand-crimson rounded-full" />
               </button>
 
-              {/* Shopping Cart Trigger */}
+              {/* Shopping Cart Trigger with Bounce Animation */}
               <button
                 onClick={() => setCartOpen(true)}
-                className="p-2 text-txt-secondary hover:text-brand-crimson hover:bg-black/[0.04] rounded-full transition-colors relative"
-                title="Shopping Cart"
+                className={`p-2 text-txt-secondary hover:text-brand-crimson hover:bg-black/[0.04] rounded-full transition-colors relative ${
+                  cartBouncing ? 'animate-cart-bounce text-brand-crimson' : ''
+                }`}
+                title="Shopping Bag"
               >
                 <ShoppingBag className="w-4 h-4" />
                 {itemCount > 0 && (
@@ -234,7 +291,7 @@ export const Navbar: React.FC = () => {
                 )}
               </button>
 
-              {/* User Menu / Sign In */}
+              {/* User Profile Menu / Sign In */}
               {isAuthenticated ? (
                 <div className="relative">
                   <button
@@ -255,7 +312,7 @@ export const Navbar: React.FC = () => {
                       <Link
                         to="/customer/dashboard"
                         onClick={() => setShowUserMenu(false)}
-                        className="w-full text-left px-3 py-1.5 rounded-xl hover:bg-[#F7F4EE] text-xs text-txt-secondary hover:text-txt-primary block mt-1"
+                        className="w-full text-left px-3 py-1.5 rounded-xl hover:bg-[#FAF7F2] text-xs text-txt-secondary hover:text-txt-primary block mt-1"
                       >
                         Customer Dashboard
                       </Link>
@@ -263,7 +320,7 @@ export const Navbar: React.FC = () => {
                         <Link
                           to="/admin/dashboard"
                           onClick={() => setShowUserMenu(false)}
-                          className="w-full text-left px-3 py-1.5 rounded-xl hover:bg-[#F7F4EE] text-xs text-brand-crimson block font-semibold"
+                          className="w-full text-left px-3 py-1.5 rounded-xl hover:bg-[#FAF7F2] text-xs text-brand-crimson block font-semibold"
                         >
                           Operations Center
                         </Link>
@@ -292,6 +349,14 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Hover Mega Menu Overlay */}
+        <MegaMenu
+          categories={MOCK_CATEGORIES}
+          featuredProducts={MOCK_PRODUCTS}
+          isOpen={showMegaMenu}
+          onClose={() => setShowMegaMenu(false)}
+        />
       </nav>
 
       {/* Global Command Palette */}

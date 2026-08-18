@@ -6,6 +6,7 @@ import {
   MOCK_WHY_REVENUE,
   MOCK_SALES_TREND,
   MOCK_DEMAND_SIGNALS,
+  MOCK_SMART_DEALS,
   MOCK_PREORDER_SUMMARIES,
   MOCK_INVENTORY_HEALTH,
   MOCK_DEAD_STOCK,
@@ -48,7 +49,10 @@ export const getMockResponse = (url: string, method: string = 'get', data?: any)
   if (cleanUrl.includes('/analytics/sales-trend') || cleanUrl.includes('/analytics/sales-chart')) {
     return MOCK_SALES_TREND;
   }
-  if (cleanUrl.includes('/demand-radar/overview') || cleanUrl.includes('/demand-radar')) {
+  if (cleanUrl.includes('/demand-radar/smart-deals') || cleanUrl.includes('/smart-deals')) {
+    return MOCK_SMART_DEALS;
+  }
+  if (cleanUrl.includes('/demand-radar/overview') || cleanUrl.includes('/demand-radar/signals') || cleanUrl.includes('/demand-radar')) {
     return MOCK_DEMAND_SIGNALS;
   }
   if (cleanUrl.includes('/preorders/demand-summary')) {
